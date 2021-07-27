@@ -165,10 +165,10 @@ void selecionar(int selecao, Graph* graph, ofstream& output_file){
         }
             //Ordenação Topologica;
         case 8:{
-
+                cout << "PRINTANDO ORDENACAO TOPOLOGICA" << endl;
             break;
         }
-        
+
         default:
         {
             cout << " Error!!! invalid option!!" << endl;
@@ -182,7 +182,7 @@ int mainMenu(ofstream& output_file, Graph* graph){
     int selecao = 1;
 
     while(selecao != 0){
-        system("clear");
+         //system("cls");//system("clear");
         selecao = menu();
 
         if(output_file.is_open())
@@ -203,6 +203,11 @@ int mainMenu(ofstream& output_file, Graph* graph){
 int main(int argc, char const *argv[]) {
 
     //Verificação se todos os parâmetros do programa foram entrados
+
+      for(int valor =0 ; valor < argc ; valor++ ){
+        cout << "Valor args [" << valor<<"] = " << argv[valor] << endl;
+      }
+
     if (argc != 6) {
 
         cout << "ERROR: Expecting: ./<program_name> <input_file> <output_file> <directed> <weighted_edge> <weighted_node> " << endl;
