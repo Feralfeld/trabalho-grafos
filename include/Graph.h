@@ -51,6 +51,7 @@ class Graph{
         Graph* agmPrim();
         float floydMarshall(int idSource, int idTarget);
         float dijkstra(int idSource, int idTarget);
+        void printarGrafo();
 
         //methods phase1
         float greed();

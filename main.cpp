@@ -88,13 +88,14 @@ Graph* leituraInstancia(ifstream& input_file, int directed, int weightedEdge, in
     //Criando objeto grafo
     Graph* graph = new Graph(order, directed, weightedEdge, weightedNode);
 
+    cout << "Lendo instancia" << endl;
     //Leitura de arquivo
     while(input_file >> idNodeSource >> idNodeTarget) {
 
         graph->insertEdge(idNodeSource, idNodeTarget, 0);
 
     }
-
+    cout << "Lendo instancia OK" << endl;
     return graph;
 }
 
@@ -104,14 +105,14 @@ int menu(){
 
     cout << "MENU" << endl;
     cout << "----" << endl;
-    cout << "[1] Fecho transitivo direto de um vértice." << endl;
-    cout << "[2] Fecho transitivo indireto de um vértice." << endl;
-    cout << "[3] Caminho Mínimo entre dois vértices - Dijkstra" << endl;
-    cout << "[4] Caminho Mínimo entre dois vértices - Floyd" << endl;
+    cout << "[1] Fecho transitivo direto de um vertice." << endl;
+    cout << "[2] Fecho transitivo indireto de um vertice." << endl;
+    cout << "[3] Caminho Mínimo entre dois vertices - Dijkstra" << endl;
+    cout << "[4] Caminho Mínimo entre dois vertices - Floyd" << endl;
     cout << "[5] Árvore Geradora Mínima de Prim" << endl;
     cout << "[6] Árvore Geradora Mínima de Kruskal" << endl;
     cout << "[7] Imprimir caminhamento em profundidade" << endl;
-    cout << "[8] Imprimir ordenacao topológica" << endl;
+    cout << "[8] Imprimir ordenacao topologica" << endl;
 
     cin >> selecao;
 
@@ -166,6 +167,7 @@ void selecionar(int selecao, Graph* graph, ofstream& output_file){
             //Ordenação Topologica;
         case 8:{
                 cout << "PRINTANDO ORDENACAO TOPOLOGICA" << endl;
+                graph->printarGrafo();
             break;
         }
 
@@ -236,7 +238,7 @@ int main(int argc, char const *argv[]) {
 
     if(input_file.is_open()){
 
-        graph = leituraInstancia(input_file, atoi(argv[3]), atoi(argv[4]), atoi(argv[5]));
+        graph = leitura(input_file, atoi(argv[3]), atoi(argv[4]), atoi(argv[5]));
 
     }else
         cout << "Unable to open " << argv[1];
