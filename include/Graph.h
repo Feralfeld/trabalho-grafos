@@ -50,9 +50,9 @@ class Graph{
         void breadthFirstSearch(ofstream& output_file);
         Graph* getVertexInduced(int* listIdNodes);
         Graph* agmKuskal();
-        Graph* agmPrim();
+        Graph* agmPrim(ofstream& arquivo_saida);
         float floydMarshall(int idSource, int idTarget);
-        float dijkstra(int idSource, int idTarget,  ofstream& arquivo_saida);
+        float dijkstra(int idSource, int idTarget, ofstream& arquivo_saida);
         void printarGrafo();
         void printarGrafoGraphviz(ofstream& output_file);
         //methods phase1

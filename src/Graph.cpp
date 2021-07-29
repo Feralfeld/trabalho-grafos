@@ -12,6 +12,9 @@
 #include <float.h>
 #include <iomanip>
 
+#define INFINITO 99999999
+
+
 using namespace std;
 
 /**************************************************************************************************
@@ -208,172 +211,19 @@ float Graph::floydMarshall(int idSource, int idTarget){
 
 void Graph::bubbleSort()
 {
-   int i, j;
 
-   bool swapped;
-   Node* primeiro = this->first_node;
-   Node* aux = this->first_node;
-
-   for (i = 0; i < this->order; i++){
-     swapped = false;
-
-     primeiro = this->first_node;
-     for (j = 0; j < this->order; j++)
-     {
-        if(primeiro->getNextNode() != nullptr){
-        if (primeiro->getId() > primeiro->getNextNode()->getId())
-        {
-           swapNos(primeiro, primeiro->getNextNode());
-           swapped = true;
-        }
-        if(primeiro->getNextNode() != nullptr){
-       primeiro = primeiro->getNextNode();
-       }
-       }
-     }
-
-     if (swapped == false){
-        break;}
-
-   aux = aux->getNextNode();
-   }
 
 }
 
 
 void Graph::swapNos(Node* primeiro, Node* segundo)
 {
-    Node* temp = primeiro;
-    Node* anterior = primeiro->getgetAnteriorNo();
 
-   if(segundo->getProximoNo() == nullptr && primeiro->getAnteriorNo() == nullptr){
-        segundo->setAnteriorNo(nullptr);
-        segundo->setProximoNo(primeiro);
-
-        primeiro->setAnteriorNo(segundo);
-        primeiro->setProximoNo(nullptr);
-
-        this->ultimo_no = primeiro;
-        this->primeiroNo = segundo;
-    }else{
-    if(segundo->getProximoNo() == nullptr){
-
-    anterior->setProximoNo(segundo);
-
-    segundo->setAnteriorNo(anterior);
-    segundo->setProximoNo(primeiro);
-
-    primeiro->setAnteriorNo(segundo);
-    primeiro->setProximoNo(nullptr);
-
-    this->ultimo_no = primeiro;
-
-    }else{
-       if(primeiro->getAnteriorNo() == nullptr){
-        No* proximo = segundo->getProximoNo();
-
-        segundo->setAnteriorNo(nullptr);
-        segundo->setProximoNo(primeiro);
-
-        primeiro->setAnteriorNo(segundo);
-        primeiro->setProximoNo(proximo);
-
-        proximo->setAnteriorNo(primeiro);
-
-        this->primeiroNo = segundo;
-
-       }else{
-    No* proximo = segundo->getProximoNo();
-
-    anterior->setProximoNo(segundo);
-
-    segundo->setAnteriorNo(anterior);
-    segundo->setProximoNo(primeiro);
-
-    primeiro->setAnteriorNo(segundo);
-    primeiro->setProximoNo(proximo);
-
-    proximo->setAnteriorNo(primeiro);
-       }
-    }}
 
 }
 
 float Graph::dijkstra(int idSource, int idTarget, ofstream& arquivo_saida){
-    arquivo_saida << "---------Algoritmo de Dijkstra---------" << endl;
-    arquivo_saida << "No -- No  |  Distancia" << endl;
-    arquivo_saida << "--------------------------" << endl;
 
-    this->bubbleSort();
-        int V = this->numeroNos+1;
-        int dist[V];
-
-    bool sptSet[V];
-
-    for (int i = 0; i < V; i++){
-        dist[i] = 999, sptSet[i] = false;
-    }
-
-    dist[idSource] = 0;
-    int graph[V][V];
-
-
-      for (int i = 0; i < V; i++)
-        {
-            for (int j = 0; j < V; j++)
-            {
-                    if( i == j ){
-                        graph[i][j] = 0;
-                    }else{
-                    graph[i][j] = 999;
-                    }
-            }
-        }
-    No* no;
-    Aresta* aresta;
-  for (no = this->primeiroNo ; no != nullptr ; no = no->getProximoNo())
-    {
-        aresta = no->getPrimeiraAresta();
-        while ( aresta != nullptr){
-
-            graph[no->getId()][aresta->getTargetId()] = aresta->getPeso();
-            if(!this->directed){
-              graph[aresta->getTargetId()][no->getId()] = aresta->getPeso();
-            }
-            aresta = aresta->getProximaAresta();
-        }
-    }
-
-    int saltos[V];
-    for (int count = 0; count < V - 1; count++) {
-
-         int u = this->minDistance(dist, sptSet);
-
-        sptSet[u] = true;
-
-         for (int v = 0; v < V; v++){
-            if (!sptSet[v] && graph[u][v] && dist[u] != 999
-                && dist[u] + graph[u][v] < dist[v]){
-                dist[v] = dist[u] + graph[u][v];
-                saltos[v] = u;
-                }
-        }
-    }
-    arquivo_saida << idSource <<" -- " << idTarget << "  |      " <<dist[idTarget]<< endl;
-
-    cout << idTarget;
-    arquivo_saida << idTarget;
-    for(int x = idTarget; x != idSource ; x = saltos[x] ){
-             cout  << " salto->" <<  saltos[x];
-             arquivo_saida <<  " salto->" <<  saltos[x];
-    }
-    cout << endl;
-    arquivo_saida << endl;
-    arquivo_saida << "Distancia entre os vertices " << dist[idTarget] << endl;
-
-    arquivo_saida << "--------------------------------------------------------------------------------------------------------" << endl;
-
-    return dist[idTarget];
 }
 
 //function that prints a topological sorting
@@ -384,6 +234,7 @@ void topologicalSorting(){
 void breadthFirstSearch(ofstream& output_file){
 
 }
+
 Graph* getVertexInduced(int* listIdNodes){
 
 }
@@ -391,8 +242,128 @@ Graph* getVertexInduced(int* listIdNodes){
 Graph* agmKuskal(){
 
 }
-Graph* agmPrim(){
 
+Graph* Graph::agmPrim(ofstream& arquivo_saida){
+
+    //falta ordenação
+
+   arquivo_saida << "---------Algoritmo de Prim---------" << endl;
+    arquivo_saida << "No -- No  |  Peso Aresta" << endl;
+    arquivo_saida << "--------------------------" << endl;
+    Graph* arvore = new Graph(this->order,0,1,0);
+    int **matrizDeAdjacencias;
+    int *menoresCustos = new int[this->order];
+    int *maisProximo = new int[this->order];
+    bool *visitados = new bool[this->order];
+
+    matrizDeAdjacencias = new int *[this->order];
+
+    for (int i = 0; i < this->order; i++)
+    {
+        matrizDeAdjacencias[i] = new int[this->order];
+        for (int j = 0; j < this->order; j++)
+        {
+            matrizDeAdjacencias[i][j] = INFINITO;
+        }
+    }
+
+    int bug = 0;
+    int bugReverso = 0;
+    if(this->first_node->getId() == 0){
+            bugReverso = 1;
+    }else{
+            bug = 1;
+    }
+
+
+          for(Node* aux = this->first_node; aux != nullptr; aux = aux->getNextNode()){
+                 if(aux->getFirstEdge() != nullptr){
+                for(Edge* aux2 = aux->getFirstEdge(); aux2 != nullptr; aux2 = aux2->getNextEdge()){
+                   matrizDeAdjacencias[aux->getId()-bug][aux2->getTargetId()-bug] = aux2->getWeight();
+                   matrizDeAdjacencias[aux2->getTargetId()-bug][aux->getId()-bug] = aux2->getWeight();
+                }
+            }
+        }
+
+    visitados[0] = true;
+    for (int i = 1; i < this->order; i++)
+    {
+        menoresCustos[i] = matrizDeAdjacencias[0][i];
+        maisProximo[i] = 0;
+        visitados[i] = false;
+    }
+
+    int peso = 0;
+    int atualArestas = 0;
+    int verticeAnterior = 0;
+
+    for (int i = 0; i < this->order; i++)
+    {
+        int min = INFINITO;
+        int indice = 1;
+
+        for (int j = 0; j < this->order; j++)
+        {
+            if (menoresCustos[j] < min && !visitados[j])
+            {   min = menoresCustos[j];
+                indice = j;
+            }
+        }
+
+        if (indice == 1 && min == INFINITO)
+        {break;
+        }
+        else
+        {peso += min;
+        }
+
+        if (false)
+            {
+                arquivo_saida << verticeAnterior-bugReverso << " -- " << indice-bugReverso << " | " << min << endl;
+                   cout << verticeAnterior-bugReverso << " -- " << indice-bugReverso << " | " << min << endl;
+        }
+        else
+        {if (verticeAnterior == 0)
+            {
+                arquivo_saida << this->order-bugReverso << " -- " << indice-bugReverso << " | " << min << endl;
+                cout << this->order-bugReverso << " -- " << indice-bugReverso << " | " << min << endl;
+            }
+            else if (indice == 0)
+            {
+                arquivo_saida << verticeAnterior-bugReverso << " -- " << this->order << " | " << min << endl;
+                   cout << verticeAnterior-bugReverso << " -- " << this->order << " | " << min << endl;
+            }else{
+                arquivo_saida << verticeAnterior-bugReverso << " -- " << indice-bugReverso << " | " << min << endl;
+                cout << verticeAnterior-bugReverso << " -- " << indice-bugReverso << " | " << min << endl;
+            }
+        }
+
+        verticeAnterior = indice;
+        visitados[indice] = true;
+        atualArestas++;
+        for (int j = 1; j < this->order; j++)
+        {
+            if ((matrizDeAdjacencias[indice][j] < menoresCustos[j]) && (!visitados[j]))
+            {
+                menoresCustos[j] = matrizDeAdjacencias[indice][j];
+                maisProximo[j] = indice;
+            }
+        }
+    }
+
+    arquivo_saida << "Somatorio dos Pesos: " << peso << endl;
+    arquivo_saida << "Quantidade de arestas: " << atualArestas << endl;
+    arquivo_saida << "--------------------------------------------------------------------------------------------------------" << endl
+                  << endl;
+
+    cout << "Somatorio dos Pesos: " << peso << endl;
+    cout << "Quantidade de arestas: " << atualArestas << endl;
+
+    for (int i = 0; i < this->order; i++)
+    {
+        delete[] matrizDeAdjacencias[i];
+    }
+    delete[] matrizDeAdjacencias;
 }
 
 void Graph::printarGrafoGraphviz(ofstream& output_file){
@@ -400,7 +371,7 @@ void Graph::printarGrafoGraphviz(ofstream& output_file){
 
        if(this->directed){
        if(this->first_node != nullptr){
-       if(this->weighted_edge{
+       if(this->weighted_edge){
         for(Node* aux = this->first_node; aux != nullptr; aux = aux->getNextNode()){
                  if(aux->getFirstEdge() != nullptr){
                 for(Edge* aux2 = aux->getFirstEdge(); aux2 != nullptr; aux2 = aux2->getNextEdge()){
