@@ -42,6 +42,8 @@ class Graph{
         void removeNode(int id);
         bool searchNode(int id);
         Node* getNode(int id);
+        void bubbleSort();
+        void swapNos(Node* primeiro, Node* segundo);
 
         //methods phase1
         void topologicalSorting();
@@ -50,9 +52,9 @@ class Graph{
         Graph* agmKuskal();
         Graph* agmPrim();
         float floydMarshall(int idSource, int idTarget);
-        float dijkstra(int idSource, int idTarget);
+        float dijkstra(int idSource, int idTarget,  ofstream& arquivo_saida);
         void printarGrafo();
-
+        void printarGrafoGraphviz(ofstream& output_file);
         //methods phase1
         float greed();
         float greedRandom();

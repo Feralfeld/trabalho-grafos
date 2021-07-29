@@ -206,9 +206,174 @@ float Graph::floydMarshall(int idSource, int idTarget){
 }
 
 
+void Graph::bubbleSort()
+{
+   int i, j;
 
-float Graph::dijkstra(int idSource, int idTarget){
+   bool swapped;
+   Node* primeiro = this->first_node;
+   Node* aux = this->first_node;
 
+   for (i = 0; i < this->order; i++){
+     swapped = false;
+
+     primeiro = this->first_node;
+     for (j = 0; j < this->order; j++)
+     {
+        if(primeiro->getNextNode() != nullptr){
+        if (primeiro->getId() > primeiro->getNextNode()->getId())
+        {
+           swapNos(primeiro, primeiro->getNextNode());
+           swapped = true;
+        }
+        if(primeiro->getNextNode() != nullptr){
+       primeiro = primeiro->getNextNode();
+       }
+       }
+     }
+
+     if (swapped == false){
+        break;}
+
+   aux = aux->getNextNode();
+   }
+
+}
+
+
+void Graph::swapNos(Node* primeiro, Node* segundo)
+{
+    Node* temp = primeiro;
+    Node* anterior = primeiro->getgetAnteriorNo();
+
+   if(segundo->getProximoNo() == nullptr && primeiro->getAnteriorNo() == nullptr){
+        segundo->setAnteriorNo(nullptr);
+        segundo->setProximoNo(primeiro);
+
+        primeiro->setAnteriorNo(segundo);
+        primeiro->setProximoNo(nullptr);
+
+        this->ultimo_no = primeiro;
+        this->primeiroNo = segundo;
+    }else{
+    if(segundo->getProximoNo() == nullptr){
+
+    anterior->setProximoNo(segundo);
+
+    segundo->setAnteriorNo(anterior);
+    segundo->setProximoNo(primeiro);
+
+    primeiro->setAnteriorNo(segundo);
+    primeiro->setProximoNo(nullptr);
+
+    this->ultimo_no = primeiro;
+
+    }else{
+       if(primeiro->getAnteriorNo() == nullptr){
+        No* proximo = segundo->getProximoNo();
+
+        segundo->setAnteriorNo(nullptr);
+        segundo->setProximoNo(primeiro);
+
+        primeiro->setAnteriorNo(segundo);
+        primeiro->setProximoNo(proximo);
+
+        proximo->setAnteriorNo(primeiro);
+
+        this->primeiroNo = segundo;
+
+       }else{
+    No* proximo = segundo->getProximoNo();
+
+    anterior->setProximoNo(segundo);
+
+    segundo->setAnteriorNo(anterior);
+    segundo->setProximoNo(primeiro);
+
+    primeiro->setAnteriorNo(segundo);
+    primeiro->setProximoNo(proximo);
+
+    proximo->setAnteriorNo(primeiro);
+       }
+    }}
+
+}
+
+float Graph::dijkstra(int idSource, int idTarget, ofstream& arquivo_saida){
+    arquivo_saida << "---------Algoritmo de Dijkstra---------" << endl;
+    arquivo_saida << "No -- No  |  Distancia" << endl;
+    arquivo_saida << "--------------------------" << endl;
+
+    this->bubbleSort();
+        int V = this->numeroNos+1;
+        int dist[V];
+
+    bool sptSet[V];
+
+    for (int i = 0; i < V; i++){
+        dist[i] = 999, sptSet[i] = false;
+    }
+
+    dist[idSource] = 0;
+    int graph[V][V];
+
+
+      for (int i = 0; i < V; i++)
+        {
+            for (int j = 0; j < V; j++)
+            {
+                    if( i == j ){
+                        graph[i][j] = 0;
+                    }else{
+                    graph[i][j] = 999;
+                    }
+            }
+        }
+    No* no;
+    Aresta* aresta;
+  for (no = this->primeiroNo ; no != nullptr ; no = no->getProximoNo())
+    {
+        aresta = no->getPrimeiraAresta();
+        while ( aresta != nullptr){
+
+            graph[no->getId()][aresta->getTargetId()] = aresta->getPeso();
+            if(!this->directed){
+              graph[aresta->getTargetId()][no->getId()] = aresta->getPeso();
+            }
+            aresta = aresta->getProximaAresta();
+        }
+    }
+
+    int saltos[V];
+    for (int count = 0; count < V - 1; count++) {
+
+         int u = this->minDistance(dist, sptSet);
+
+        sptSet[u] = true;
+
+         for (int v = 0; v < V; v++){
+            if (!sptSet[v] && graph[u][v] && dist[u] != 999
+                && dist[u] + graph[u][v] < dist[v]){
+                dist[v] = dist[u] + graph[u][v];
+                saltos[v] = u;
+                }
+        }
+    }
+    arquivo_saida << idSource <<" -- " << idTarget << "  |      " <<dist[idTarget]<< endl;
+
+    cout << idTarget;
+    arquivo_saida << idTarget;
+    for(int x = idTarget; x != idSource ; x = saltos[x] ){
+             cout  << " salto->" <<  saltos[x];
+             arquivo_saida <<  " salto->" <<  saltos[x];
+    }
+    cout << endl;
+    arquivo_saida << endl;
+    arquivo_saida << "Distancia entre os vertices " << dist[idTarget] << endl;
+
+    arquivo_saida << "--------------------------------------------------------------------------------------------------------" << endl;
+
+    return dist[idTarget];
 }
 
 //function that prints a topological sorting
@@ -229,3 +394,36 @@ Graph* agmKuskal(){
 Graph* agmPrim(){
 
 }
+
+void Graph::printarGrafoGraphviz(ofstream& output_file){
+        output_file << "graph Grafo {";
+
+       if(this->directed){
+       if(this->first_node != nullptr){
+       if(this->weighted_edge{
+        for(Node* aux = this->first_node; aux != nullptr; aux = aux->getNextNode()){
+                 if(aux->getFirstEdge() != nullptr){
+                for(Edge* aux2 = aux->getFirstEdge(); aux2 != nullptr; aux2 = aux2->getNextEdge()){
+                    output_file << endl;
+                    output_file << aux->getId() <<  " -- "<< aux2->getTargetId() << "[label="  << aux2->getWeight() << "];" ;
+                }
+            }
+        }
+    }else{
+         for(Node* aux = this->first_node; aux != nullptr; aux = aux->getNextNode()){
+                 if(aux->getFirstEdge() != nullptr){
+                for(Edge* aux2 = aux->getFirstEdge(); aux2 != nullptr; aux2 = aux2->getNextEdge()){
+                    output_file << endl;
+                    output_file << aux->getId() <<  " -- "<< aux2->getTargetId() << ";" ;
+                }
+            }
+        }
+    }
+    }
+    output_file << '}' << endl ;
+    }else{
+        cout << "O grafo não é direcionado" << endl;
+    }
+
+
+    }
