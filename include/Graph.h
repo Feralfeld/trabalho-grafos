@@ -47,18 +47,23 @@ class Graph{
 
         //methods phase1
         void topologicalSorting();
+        void fechoTransitivoDireto(int idNode);
         void breadthFirstSearch(ofstream& output_file);
         Graph* getVertexInduced(int* listIdNodes);
         Graph* agmKuskal();
         Graph* agmPrim(ofstream& arquivo_saida);
-        float floydMarshall(int idSource, int idTarget);
+        float floydMarshall(int idSource, int idTarget, ofstream& arquivo_saida);
         float dijkstra(int idSource, int idTarget, ofstream& arquivo_saida);
         void printarGrafo();
-        void printarGrafoGraphviz(ofstream& output_file);
+         void printarInfos();
+        void printarGrafoGraphviz();
         //methods phase1
         float greed();
         float greedRandom();
         float greedRactiveRandom();
+
+
+        int minDistance(int dist[], bool sptSet[]);
     private:
         //Auxiliar methods
 

@@ -33,6 +33,16 @@ Graph::Graph(int order, bool directed, bool weighted_edge, bool weighted_node)
     this->number_edges = 0;
 }
 
+void Graph::printarInfos(){
+
+    cout << "Ordem do grafo " << order << endl;
+    cout << "Numero de arestas " << number_edges << endl;
+    cout << "Direcionado " << directed << endl;
+    cout << "Peso nas arestas " << weighted_edge<< endl;
+    cout << "Peso nos nos " << weighted_node << endl;
+
+}
+
 void Graph::printarGrafo(){
 
         cout << "printando grafo" << endl;
@@ -133,7 +143,7 @@ void Graph::insertNode(int id)
         this->last_node->setNextNode(no);
         this->last_node = no;
     }
-    this->order++;
+    //this->order++;
     //this->numeroNos++;
 }
 
@@ -202,9 +212,98 @@ void Graph::breadthFirstSearch(ofstream &output_file){
 
 }
 
+void Graph::fechoTransitivoDireto(int idNode){
+
+    Graph* novo = new Graph(5,this->directed, this->weighted_edge, this->weighted_node);
+    novo->insertNode(idNode);
 
 
-float Graph::floydMarshall(int idSource, int idTarget){
+    Node* no;
+    Edge* aresta;
+
+    for (no = this->getNode(idNode); no != nullptr; no = no->getNextNode())
+    {
+        aresta = no->getFirstEdge();
+
+        while ( aresta != nullptr){
+
+            novo->insertEdge(no->getId(),aresta->getTargetId(), aresta->getWeight());
+            aresta = aresta->getNextEdge();
+        }
+
+    }
+
+    novo->printarGrafo();
+}
+
+float Graph::floydMarshall(int idSource, int idTarget, ofstream& arquivo_saida){
+    arquivo_saida << "---------Algoritmo de Floyd Marshall---------" << endl;
+    arquivo_saida << "No -- No  |  Distancia" << endl;
+    arquivo_saida << "--------------------------" << endl;
+
+
+    int V = this->order+1;
+    int dist[V][V], i, j, k;
+    Edge* aresta;
+    Node* no;
+     int anterior[V][V];
+
+      for (i = 0; i < V; i++)
+        {
+            for (j = 0; j < V; j++)
+            {
+                 anterior[i][j] = idSource;
+                    if( i == j ){
+                        dist[i][j] = 0;
+                    }else{
+                    dist[i][j] = 9999;
+                    }
+            }
+        }
+
+    for (no = this->first_node; no != nullptr ; no = no->getNextNode())
+    {
+        aresta = no->getFirstEdge();
+        while ( aresta != nullptr){
+
+            dist[no->getId()][aresta->getTargetId()] = aresta->getWeight();
+            if(!this->directed){
+              dist[aresta->getTargetId()][no->getId()] = aresta->getWeight();
+            }
+            aresta = aresta->getNextEdge();
+
+        }
+    }
+
+    for (k = 0; k < V; k++)
+    {
+        for (i = 0; i < V; i++)
+        {
+            for (j = 0; j < V; j++)
+            {
+                if (dist[i][k] + dist[k][j] < dist[i][j]){
+                    dist[i][j] = dist[i][k] + dist[k][j];
+                    anterior[i][j] = k;
+
+                }
+            }
+        }
+    }
+ arquivo_saida << idSource <<" -- " << idTarget << "  |      " <<dist[idSource][idTarget]<< endl;
+
+      cout << idTarget ;
+      arquivo_saida << idTarget;
+    int y = idTarget;
+    for(int x = idTarget; x != idSource ; x = anterior[idSource][x]){
+        cout << " salto-->" << anterior[idSource][x];
+        arquivo_saida << " salto-->" << anterior[idSource][x];
+    }
+    cout <<endl;
+    arquivo_saida << endl;
+    arquivo_saida <<  "Distancia entre os vertices " << dist[idSource][idTarget] << endl;
+    arquivo_saida << "--------------------------------------------------------------------------------------------------------" << endl;
+
+return dist[idSource][idTarget];
 
 }
 
@@ -224,6 +323,92 @@ void Graph::swapNos(Node* primeiro, Node* segundo)
 
 float Graph::dijkstra(int idSource, int idTarget, ofstream& arquivo_saida){
 
+    arquivo_saida << "---------Algoritmo de Dijkstra---------" << endl;
+    arquivo_saida << "No -- No  |  Distancia" << endl;
+    arquivo_saida << "--------------------------" << endl;
+
+        int V = this->order+1;
+        int dist[V];
+
+    bool sptSet[V];
+
+    for (int i = 0; i < V; i++){
+        dist[i] = 999, sptSet[i] = false;
+    }
+
+    dist[idSource] = 0;
+    int graph[V][V];
+
+      for (int i = 0; i < V; i++)
+        {
+            for (int j = 0; j < V; j++)
+            {
+                    if( i == j ){
+                        graph[i][j] = 0;
+                    }else{
+                    graph[i][j] = 999;
+                    }
+            }
+        }
+    Node* no;
+    Edge* aresta;
+  for (no = this->first_node ; no != nullptr ; no = no->getNextNode())
+    {
+        aresta = no->getFirstEdge();
+        while ( aresta != nullptr){
+
+            graph[no->getId()][aresta->getTargetId()] = aresta->getWeight();
+            if(!this->directed){
+              graph[aresta->getTargetId()][no->getId()] = aresta->getWeight();
+            }
+            aresta = aresta->getNextEdge();
+        }
+    }
+
+    int saltos[V];
+    for (int count = 0; count < V - 1; count++) {
+
+       int u = this->minDistance(dist, sptSet);
+
+        sptSet[u] = true;
+
+         for (int v = 0; v < V; v++){
+            if (!sptSet[v] && graph[u][v] && dist[u] != 999
+                && dist[u] + graph[u][v] < dist[v]){
+                dist[v] = dist[u] + graph[u][v];
+                saltos[v] = u;
+                }
+        }
+    }
+    arquivo_saida << idSource <<" -- " << idTarget << "  |      " <<dist[idTarget]<< endl;
+
+    cout << idTarget;
+    arquivo_saida << idTarget;
+    for(int x = idTarget; x != idSource ; x = saltos[x] ){
+             cout  << " salto->" <<  saltos[x];
+             arquivo_saida <<  " salto->" <<  saltos[x];
+    }
+    cout << endl;
+    arquivo_saida << endl;
+    arquivo_saida << "Distancia entre os vertices " << dist[idTarget] << endl;
+
+    arquivo_saida << "--------------------------------------------------------------------------------------------------------" << endl;
+
+        return dist[idTarget];
+
+
+}
+
+
+int Graph::minDistance(int dist[], bool sptSet[])
+{     int V = this->order+1;
+    int min = 999, min_index;
+
+    for (int v = 0; v < V; v++)
+        if (sptSet[v] == false && dist[v] <= min)
+            min = dist[v], min_index = v;
+
+    return min_index;
 }
 
 //function that prints a topological sorting
@@ -247,10 +432,13 @@ Graph* Graph::agmPrim(ofstream& arquivo_saida){
 
     //falta ordenação
 
-   arquivo_saida << "---------Algoritmo de Prim---------" << endl;
+    arquivo_saida << "---------Algoritmo de Prim---------" << endl;
     arquivo_saida << "No -- No  |  Peso Aresta" << endl;
     arquivo_saida << "--------------------------" << endl;
+
     Graph* arvore = new Graph(this->order,0,1,0);
+
+
     int **matrizDeAdjacencias;
     int *menoresCustos = new int[this->order];
     int *maisProximo = new int[this->order];
@@ -366,10 +554,14 @@ Graph* Graph::agmPrim(ofstream& arquivo_saida){
     delete[] matrizDeAdjacencias;
 }
 
-void Graph::printarGrafoGraphviz(ofstream& output_file){
-        output_file << "graph Grafo {";
+void Graph::printarGrafoGraphviz(){
 
-       if(this->directed){
+       ofstream output_file;
+
+       output_file.open ("resultado/teste1.dot", ios::out | ios::trunc);
+
+       if(!this->directed){
+       output_file << "graph Grafo {";
        if(this->first_node != nullptr){
        if(this->weighted_edge){
         for(Node* aux = this->first_node; aux != nullptr; aux = aux->getNextNode()){
@@ -393,8 +585,30 @@ void Graph::printarGrafoGraphviz(ofstream& output_file){
     }
     output_file << '}' << endl ;
     }else{
-        cout << "O grafo não é direcionado" << endl;
-    }
+        cout << "O grafo é direcionado" << endl;
+        output_file << "digraph Grafo {";
 
+        if(this->weighted_edge){
+        for(Node* aux = this->first_node; aux != nullptr; aux = aux->getNextNode()){
+                 if(aux->getFirstEdge() != nullptr){
+                for(Edge* aux2 = aux->getFirstEdge(); aux2 != nullptr; aux2 = aux2->getNextEdge()){
+                    output_file << endl;
+                    output_file << aux->getId() <<  " -> "<< aux2->getTargetId() << "[label="  << aux2->getWeight() << "];" ;
+                }
+            }
+        }
+    }else{
+         for(Node* aux = this->first_node; aux != nullptr; aux = aux->getNextNode()){
+                 if(aux->getFirstEdge() != nullptr){
+                for(Edge* aux2 = aux->getFirstEdge(); aux2 != nullptr; aux2 = aux2->getNextEdge()){
+                    output_file << endl;
+                    output_file << aux->getId() <<  " -> "<< aux2->getTargetId() << ";" ;
+                }
+            }
+        }
+    }
+    }
+     output_file << endl;
+    output_file << "}";
 
     }

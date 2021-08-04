@@ -113,6 +113,7 @@ int menu(){
     cout << "[6] Árvore Geradora Mínima de Kruskal" << endl;
     cout << "[7] Imprimir caminhamento em profundidade" << endl;
     cout << "[8] Imprimir ordenacao topologica" << endl;
+    cout << "[9] Imprimir informacoes do grafo" << endl;
 
     cin >> selecao;
 
@@ -126,7 +127,11 @@ void selecionar(int selecao, Graph* graph, ofstream& output_file){
 
             //Fecho transitivo direto de um vértice;
         case 1:{
+            int idNo;
+            cout << "Digite o primeiro vertice" << endl;
+            cin >> idNo;
 
+            graph->fechoTransitivoDireto(idNo);
             break;
         }
 
@@ -138,19 +143,37 @@ void selecionar(int selecao, Graph* graph, ofstream& output_file){
 
             //Caminho mínimo entre dois vértices usando Dijkstra;
         case 3:{
+            int primeiro, segundo;
+            cout << "Digite o primeiro vertice" << endl;
+            cin >> primeiro;
+            cout << "Digite o segundo vertice" << endl;
+            cin >> segundo;
 
+
+            cout << "distancia entre os vertices " <<  graph->dijkstra(primeiro,segundo,output_file) << endl;
             break;
+
         }
 
             //Caminho mínimo entre dois vértices usando Floyd;
         case 4:{
 
+            int primeiro, segundo;
+            cout << "Digite o primeiro vertice" << endl;
+            cin >> primeiro;
+            cout << "Digite o segundo vertice" << endl;
+            cin >> segundo;
+
+
+            cout << "distancia entre os vertices " <<  graph->floydMarshall(primeiro,segundo,output_file) << endl;
+            break;
             break;
         }
 
             //AGM Prim;
         case 5:{
-
+            cout << "Árvore Geradora Mínima de Prim" << endl;
+            graph->agmPrim(output_file);
             break;
         }
 
@@ -167,7 +190,13 @@ void selecionar(int selecao, Graph* graph, ofstream& output_file){
             //Ordenação Topologica;
         case 8:{
                 cout << "PRINTANDO ORDENACAO TOPOLOGICA" << endl;
-                graph->printarGrafo();
+                graph->printarGrafoGraphviz();
+            break;
+        }
+
+          case 9:{
+                cout << "PRINTANDO informacoes" << endl;
+                graph->printarInfos();
             break;
         }
 

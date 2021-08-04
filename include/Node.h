@@ -20,6 +20,7 @@ class Node{
         unsigned int out_degree;
         float weight;
         Node* next_node;
+        Node* previous_node;
 
     public:
         // Constructor

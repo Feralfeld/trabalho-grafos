@@ -14,6 +14,7 @@ class Edge{
     private:
         int target_id;
         Edge* next_edge;
+        Edge* previous_edge;
         float weight;
 
     public:
@@ -24,11 +25,13 @@ class Edge{
         // Getters
         int getTargetId();
         Edge* getNextEdge();
+        Edge* getPreviousEdge();
         float getWeight();
         // Setters
         void setNextEdge(Edge* edge);
-        void setWeight(float weight); 
+        void setPreviousEdge(Edge* edge);
+        void setWeight(float weight);
 
-}; 
+};
 
 #endif // EDGE_H_INCLUDED
