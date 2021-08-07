@@ -214,23 +214,48 @@ void Graph::breadthFirstSearch(ofstream &output_file){
 
 void Graph::fechoTransitivoDireto(int idNode){
 
-    Graph* novo = new Graph(5,this->directed, this->weighted_edge, this->weighted_node);
+    Graph* novo = new Graph(0,this->directed, this->weighted_edge, this->weighted_node);
     novo->insertNode(idNode);
-
-
     Node* no;
     Edge* aresta;
 
-    for (no = this->getNode(idNode); no != nullptr; no = no->getNextNode())
+
+    for (no = novo->getNode(idNode); no != nullptr; no = no->getNextNode())
     {
-        aresta = no->getFirstEdge();
+        aresta = this->getNode(no->getId())->getFirstEdge();
 
         while ( aresta != nullptr){
 
             novo->insertEdge(no->getId(),aresta->getTargetId(), aresta->getWeight());
             aresta = aresta->getNextEdge();
         }
+    }
 
+    novo->printarGrafo();
+}
+
+
+
+void Graph::fechoTransitivoIndireto(int idNode){
+
+    Graph* novo = new Graph(0,this->directed, this->weighted_edge, this->weighted_node);
+    novo->insertNode(idNode);
+    Node* no;
+    Edge* aresta;
+
+
+    for (no = this->getNode(idNode); no != nullptr; no = no->getNextNode())
+    {
+        aresta = this->getNode(no->getId())->getFirstEdge();
+
+        while ( aresta != nullptr){
+
+            if(aresta->getTargetId() == no->getId()){
+
+            novo->insertEdge(no->getId(),aresta->getTargetId(), aresta->getWeight());
+            aresta = aresta->getNextEdge();
+            }
+        }
     }
 
     novo->printarGrafo();
@@ -430,7 +455,6 @@ Graph* agmKuskal(){
 
 Graph* Graph::agmPrim(ofstream& arquivo_saida){
 
-    //falta ordenação
 
     arquivo_saida << "---------Algoritmo de Prim---------" << endl;
     arquivo_saida << "No -- No  |  Peso Aresta" << endl;

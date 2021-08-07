@@ -137,7 +137,12 @@ void selecionar(int selecao, Graph* graph, ofstream& output_file){
 
             //Fecho transitivo indireto de um vértice;
         case 2:{
+        int idNo;
+            cout << "Digite o primeiro vertice" << endl;
+            cin >> idNo;
 
+            graph->fechoTransitivoIndireto(idNo);
+            break;
             break;
         }
 
