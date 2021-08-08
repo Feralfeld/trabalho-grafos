@@ -143,7 +143,6 @@ void selecionar(int selecao, Graph* graph, ofstream& output_file){
 
             graph->fechoTransitivoIndireto(idNo);
             break;
-            break;
         }
 
             //Caminho mínimo entre dois vértices usando Dijkstra;
@@ -190,7 +189,11 @@ void selecionar(int selecao, Graph* graph, ofstream& output_file){
         }
             //Busca em largura;
         case 7:{
+            int idNo;
+            cout << "Digite o ID do vertice" << endl;
+            cin >> idNo;
 
+            graph->buscaEmProfundidade(idNo);
             break;
         }
             //Ordenação Topologica;

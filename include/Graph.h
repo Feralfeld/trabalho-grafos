@@ -56,7 +56,8 @@ class Graph{
         float floydMarshall(int idSource, int idTarget, ofstream& arquivo_saida);
         float dijkstra(int idSource, int idTarget, ofstream& arquivo_saida);
         void printarGrafo();
-         void printarInfos();
+        void printarInfos();
+        void buscaEmProfundidade(int idNode);
         void printarGrafoGraphviz();
         //methods phase1
         float greed();

@@ -99,6 +99,7 @@ void Node::insertEdge(int target_id, float weight){
     if(this->first_edge != nullptr){
         // Allocating the new edge and keeping the integrity of the edge list
         Edge* edge = new Edge(target_id);
+        edge->setNextEdge(nullptr);
         edge->setWeight(weight);
         this->last_edge->setNextEdge(edge);
         this->last_edge = edge;

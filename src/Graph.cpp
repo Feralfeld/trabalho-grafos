@@ -11,7 +11,7 @@
 #include <ctime>
 #include <float.h>
 #include <iomanip>
-
+#include <stack>
 #define INFINITO 99999999
 
 
@@ -198,6 +198,75 @@ void Graph::insertEdge(int id, int target_id, float weight)
     }
 }
 
+
+void Graph::buscaEmProfundidade(int v){
+    this->printarGrafo();
+    int flag = 1;
+
+    if(this->getNode(0) != nullptr){
+            flag = 0;
+    }
+
+    Graph* novo = new Graph(0,this->directed, this->weighted_edge, this->weighted_node);
+    novo->insertNode(v);
+
+	stack<int> pilha;
+	bool visitados[this->order]; // vetor de visitados
+
+	// marca todos como não visitados
+	for(int i = 0; i < this->order; i++)
+		visitados[i] = false;
+
+	while(true)
+	{
+
+		if(!visitados[v-flag])
+		{
+			visitados[v-flag] = true; // marca como visitado
+			pilha.push(v-flag); // insere "v" na pilha
+		}
+
+		bool achou = false;
+
+        int it = 0;
+
+        // busca por um vizinho não visitado
+		Node* no = this->getNode(v);
+
+
+		for(Edge* aresta = no->getFirstEdge(); aresta != nullptr; aresta = aresta->getNextEdge()){
+
+
+            if(!visitados[aresta->getTargetId()-flag]){
+                achou = true;
+                it = aresta->getTargetId();
+                novo->insertEdge(v, aresta->getTargetId(), aresta->getWeight());
+				break;
+            }
+		}
+
+		if(achou){
+			v = it; // atualiza o "v"
+		} else {
+      	// se todos os vizinhos estão visitados ou não existem vizinhos
+			// remove da pilha
+			pilha.pop();
+     		// se a pilha ficar vazia, então terminou a busca
+
+			if(pilha.empty()){
+     			break;
+			}
+
+			// se chegou aqui, é porque pode pegar elemento do topo
+			v = pilha.top();
+
+		}
+	}
+
+	novo->printarGrafo();
+}
+
+
 void Graph::removeNode(int id){
 
 }
@@ -206,7 +275,6 @@ bool Graph::searchNode(int id)
 {
 
 }
-//Function that prints a set of edges belongs breadth tree
 
 void Graph::breadthFirstSearch(ofstream &output_file){
 
