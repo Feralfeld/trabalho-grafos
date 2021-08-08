@@ -59,6 +59,9 @@ class Graph{
         void printarInfos();
         void buscaEmProfundidade(int idNode);
         void printarGrafoGraphviz();
+        void ordenacaoTopologica();
+
+
         //methods phase1
         float greed();
         float greedRandom();

@@ -199,12 +199,13 @@ void selecionar(int selecao, Graph* graph, ofstream& output_file){
             //Ordenação Topologica;
         case 8:{
                 cout << "PRINTANDO ORDENACAO TOPOLOGICA" << endl;
-                graph->printarGrafoGraphviz();
+                graph->ordenacaoTopologica();
             break;
         }
 
           case 9:{
                 cout << "PRINTANDO informacoes" << endl;
+                graph->printarGrafoGraphviz();
                 graph->printarInfos();
             break;
         }

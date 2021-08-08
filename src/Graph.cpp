@@ -268,13 +268,32 @@ void Graph::buscaEmProfundidade(int v){
 
 
 void Graph::removeNode(int id){
-
+if(searchNode(id)){
+for(Node* aux = this->first_node; aux != nullptr; aux = aux->getNextNode()){
+if(aux->getNextNode()->getId() == id){
+Node* aux2 = aux->getNextNode(); // selected id
+aux2->removeAllEdges();
+aux->setNextNode(aux2->getNextNode());
+delete aux2;
+}
+}
+} else {
+cout << "Node not found!" << endl;
+}
 }
 
 bool Graph::searchNode(int id)
 {
-
+if(this->first_node != nullptr){
+for(Node* aux = this->first_node; aux != nullptr; aux = aux->getNextNode()){
+if(aux->getId() == id)
+return true;
 }
+}
+
+return false;
+}
+
 
 void Graph::breadthFirstSearch(ofstream &output_file){
 
@@ -802,5 +821,16 @@ void Graph::printarGrafoGraphviz(){
     }
      output_file << endl;
     output_file << "}";
-
     }
+
+
+
+void Graph::ordenacaoTopologica(){
+
+
+
+
+
+}
+
+
