@@ -449,7 +449,107 @@ Graph* getVertexInduced(int* listIdNodes){
 
 }
 
-Graph* agmKuskal(){
+class ArestaSimples
+{
+public:
+    int origem;
+    int destino;
+    int peso;
+};
+
+Graph* Graph::agmKuskal(ofstream &arquivo_saida){
+
+    int i = 0, quantNos = 0; int quant_aresta = this-> number_edges;
+
+    ArestaSimples* listaAresta = new ArestaSimples[this->number_edges];
+
+      for(Node* aux = this->getFirstNode(); aux != nullptr; aux = aux->getNextNode()){
+                for(Edge* aux2 = aux->getFirstEdge(); aux2 != nullptr; aux2 = aux2->getNextEdge()){
+                listaAresta[i].origem = aux->getId();
+                listaAresta[i].destino = aux2->getTargetId();
+                listaAresta[i].peso = aux2->getWeight();
+                i++;
+                 }
+        }
+
+   ArestaSimples aux;
+    for (int j = 0; j < quant_aresta; j++)
+    {
+        for (int k = j + 1; k < quant_aresta; k++)
+        {
+            if (listaAresta[j].peso > listaAresta[k].peso)
+            {
+                aux = listaAresta[j];
+                listaAresta[j] = listaAresta[k];
+                listaAresta[k] = aux;
+            }
+        }
+    }
+
+    ArestaSimples *listaArestasSolucao = new ArestaSimples[quant_aresta];
+
+    int quantArestasSolucao = 0;
+    int atual = 0;
+    int arvore[quant_aresta];
+
+    for (int i = 0; i < quant_aresta; i++)
+    {
+        arvore[i] = i;
+    }
+
+    for (int i = 0; i < quant_aresta; i++)
+    {
+        if (arvore[listaAresta[i].origem] != arvore[listaAresta[i].destino])
+        {
+            listaArestasSolucao[atual] = listaAresta[i];
+            atual++;
+            quantArestasSolucao++;
+            int verticeAntigo = arvore[listaAresta[i].origem];
+            int novoVertice = arvore[listaAresta[i].destino];
+            for (int j = 0; j < quant_aresta; j++)
+            {
+                if (arvore[j] == verticeAntigo)
+                    arvore[j] = novoVertice;
+            }
+        }
+    }
+
+    unsigned long long int somatorioPesos = 0;
+    arquivo_saida << "---------AGM KRUSKAL---------" << endl;
+    arquivo_saida << "[No_Origem -- No_Destino] - Peso" << endl;
+    arquivo_saida << "-----------------------------" << endl;
+    for (int l = 0; l < quantArestasSolucao; l++)
+    {
+        if (true)
+        {arquivo_saida << "[" << listaArestasSolucao[l].origem << " -> " << listaArestasSolucao[l].destino << "] - " << listaArestasSolucao[l].peso << endl;
+            cout << "[" << listaArestasSolucao[l].origem << " -> " << listaArestasSolucao[l].destino << "] - " << listaArestasSolucao[l].peso << endl;
+
+        }
+        else
+        {if (listaArestasSolucao[l].origem == 0)
+            {
+            arquivo_saida << "[" << this->order << " -> " << listaArestasSolucao[l].destino << "] - " << listaArestasSolucao[l].peso << endl;
+            cout  << "[" << this->order << " -> " << listaArestasSolucao[l].destino << "] - " << listaArestasSolucao[l].peso << endl;
+            }else if (listaArestasSolucao[l].destino == 0)
+            {
+                arquivo_saida << "[" << listaArestasSolucao[l].origem << " -> " << this->order << "] - " << listaArestasSolucao[l].peso << endl;
+                cout  << "[" << listaArestasSolucao[l].origem << " -> " << this->order << "] - " << listaArestasSolucao[l].peso << endl;
+              }else{
+                arquivo_saida << "[" << listaArestasSolucao[l].origem << " -> " << listaArestasSolucao[l].destino << "] - " << listaArestasSolucao[l].peso << endl;
+                cout << "[" << listaArestasSolucao[l].origem << " -> " << listaArestasSolucao[l].destino << "] - " << listaArestasSolucao[l].peso << endl;
+                }
+        }
+        somatorioPesos += listaArestasSolucao[l].peso;
+    }
+    arquivo_saida << "Somatorio dos Pesos: " << somatorioPesos << endl;
+    arquivo_saida << "Quantidade de arestas: " << quantArestasSolucao << endl;
+    arquivo_saida << "--------------------------------------------------------------------------------------------------------" << endl
+                  << endl;
+    cout << "Somatorio dos Pesos: " << somatorioPesos << endl;
+    cout << "Quantidade de arestas: " << quantArestasSolucao << endl;
+    delete[] listaAresta;
+    delete[] listaArestasSolucao;
+
 
 }
 

@@ -51,7 +51,7 @@ class Graph{
         void fechoTransitivoIndireto(int idNode);
         void breadthFirstSearch(ofstream& output_file);
         Graph* getVertexInduced(int* listIdNodes);
-        Graph* agmKuskal();
+        Graph* agmKuskal(ofstream &arquivo_saida);
         Graph* agmPrim(ofstream& arquivo_saida);
         float floydMarshall(int idSource, int idTarget, ofstream& arquivo_saida);
         float dijkstra(int idSource, int idTarget, ofstream& arquivo_saida);

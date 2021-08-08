@@ -109,8 +109,8 @@ int menu(){
     cout << "[2] Fecho transitivo indireto de um vertice." << endl;
     cout << "[3] Caminho Mínimo entre dois vertices - Dijkstra" << endl;
     cout << "[4] Caminho Mínimo entre dois vertices - Floyd" << endl;
-    cout << "[5] Árvore Geradora Mínima de Prim" << endl;
-    cout << "[6] Árvore Geradora Mínima de Kruskal" << endl;
+    cout << "[5] Arvore Geradora Minima de Prim" << endl;
+    cout << "[6] Arvore Geradora Minima de Kruskal" << endl;
     cout << "[7] Imprimir caminhamento em profundidade" << endl;
     cout << "[8] Imprimir ordenacao topologica" << endl;
     cout << "[9] Imprimir informacoes do grafo" << endl;
@@ -170,21 +170,22 @@ void selecionar(int selecao, Graph* graph, ofstream& output_file){
             cin >> segundo;
 
 
-            cout << "distancia entre os vertices " <<  graph->floydMarshall(primeiro,segundo,output_file) << endl;
+            cout << "Distancia entre os vertices " <<  graph->floydMarshall(primeiro,segundo,output_file) << endl;
             break;
             break;
         }
 
             //AGM Prim;
         case 5:{
-            cout << "Árvore Geradora Mínima de Prim" << endl;
+            cout << "Arvore Geradora Minima de Prim" << endl;
             graph->agmPrim(output_file);
             break;
         }
 
             //AGM - Kruscal;
         case 6:{
-
+       cout << "Árvore Geradora Minima de Kruskal" << endl;
+            graph->agmKuskal(output_file);
             break;
         }
             //Busca em largura;
