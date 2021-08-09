@@ -7,8 +7,8 @@
 #include <iomanip>
 #include <stdlib.h>
 #include <chrono>
-#include "Graph.h"
-#include "Node.h"
+#include "./include/Graph.h"
+#include "./include/Node.h"
 
 using namespace std;
 
@@ -187,7 +187,7 @@ void selecionar(int selecao, Graph* graph, ofstream& output_file){
             graph->agmKuskal(output_file);
             break;
         }
-            //Busca em largura;
+            //Busca em Profundidade;
         case 7:{
             int idNo;
             cout << "Digite o ID do vertice" << endl;

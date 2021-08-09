@@ -1,4 +1,4 @@
-#include "Edge.h"
+#include "../include/Edge.h"
 #include <iostream>
 
 using namespace std;
