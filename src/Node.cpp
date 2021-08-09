@@ -1,5 +1,5 @@
-#include "Node.h"
-#include "Edge.h"
+#include "../include/Node.h"
+#include "../include/Edge.h"
 #include <iostream>
 
 using namespace std;

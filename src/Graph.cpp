@@ -1,6 +1,6 @@
-#include "Graph.h"
-#include "Node.h"
-#include "Edge.h"
+#include "../include/Graph.h"
+#include "../include/Node.h"
+#include "../include/Edge.h"
 #include <iostream>
 #include <fstream>
 #include <stack>
@@ -213,7 +213,7 @@ void Graph::buscaEmProfundidade(int v){
 	stack<int> pilha;
 	bool visitados[this->order]; // vetor de visitados
 
-	// marca todos como não visitados
+	// marca todos como nï¿½o visitados
 	for(int i = 0; i < this->order; i++)
 		visitados[i] = false;
 
@@ -230,7 +230,7 @@ void Graph::buscaEmProfundidade(int v){
 
         int it = 0;
 
-        // busca por um vizinho não visitado
+        // busca por um vizinho nï¿½o visitado
 		Node* no = this->getNode(v);
 
 
@@ -248,16 +248,16 @@ void Graph::buscaEmProfundidade(int v){
 		if(achou){
 			v = it; // atualiza o "v"
 		} else {
-      	// se todos os vizinhos estão visitados ou não existem vizinhos
+      	// se todos os vizinhos estï¿½o visitados ou nï¿½o existem vizinhos
 			// remove da pilha
 			pilha.pop();
-     		// se a pilha ficar vazia, então terminou a busca
+     		// se a pilha ficar vazia, entï¿½o terminou a busca
 
 			if(pilha.empty()){
      			break;
 			}
 
-			// se chegou aqui, é porque pode pegar elemento do topo
+			// se chegou aqui, ï¿½ porque pode pegar elemento do topo
 			v = pilha.top();
 
 		}
@@ -268,30 +268,30 @@ void Graph::buscaEmProfundidade(int v){
 
 
 void Graph::removeNode(int id){
-if(searchNode(id)){
-for(Node* aux = this->first_node; aux != nullptr; aux = aux->getNextNode()){
-if(aux->getNextNode()->getId() == id){
-Node* aux2 = aux->getNextNode(); // selected id
-aux2->removeAllEdges();
-aux->setNextNode(aux2->getNextNode());
-delete aux2;
-}
-}
-} else {
-cout << "Node not found!" << endl;
-}
+    if(searchNode(id)){
+        for(Node* aux = this->first_node; aux != nullptr; aux = aux->getNextNode()){
+            if(aux->getNextNode()->getId() == id){
+                Node* aux2 = aux->getNextNode(); // selected id
+                aux2->removeAllEdges();
+                aux->setNextNode(aux2->getNextNode());
+                delete aux2;
+            }
+        }
+    } else {
+        cout << "Node not found!" << endl;
+    }
 }
 
 bool Graph::searchNode(int id)
 {
-if(this->first_node != nullptr){
-for(Node* aux = this->first_node; aux != nullptr; aux = aux->getNextNode()){
-if(aux->getId() == id)
-return true;
-}
-}
+    if(this->first_node != nullptr){
+        for(Node* aux = this->first_node; aux != nullptr; aux = aux->getNextNode()){
+            if(aux->getId() == id)
+                return true;
+        }
+    }
 
-return false;
+    return false;
 }
 
 
@@ -796,7 +796,7 @@ void Graph::printarGrafoGraphviz(){
     }
     output_file << '}' << endl ;
     }else{
-        cout << "O grafo é direcionado" << endl;
+        cout << "O grafo ï¿½ direcionado" << endl;
         output_file << "digraph Grafo {";
 
         if(this->weighted_edge){
@@ -826,11 +826,35 @@ void Graph::printarGrafoGraphviz(){
 
 
 void Graph::ordenacaoTopologica(){
+    int initialNodes [getOrder()]; // vetor que vai armazenar os vertices com grau de entrada 0
+    int i = 0; //contador das posicoes de initialNodes[]
 
+    //Inserindo os grafos com grau de entrada 0 no vetor
+    Node* aux; 
+    for(aux = this->first_node; aux != nullptr; aux = aux->getNextNode()){
+        if(aux->getInDegree() == 0){
+            initialNodes[i] = aux->getId(); 
+            i++;
+        }
+    }
+    
+    int nodes [getOrder()]; //Vetor que armazena os valores na ordem
+    int t = 0; //contador para o vetor
+    int aux2; //auxiliar para atribuir os valores
+    while(initialNodes[0] != null){
+        aux2 = initialNodes[i - 1];
+        i--;
+        initialNodes[i] = null;
+        nodes[t] = 0;
+        t++;
 
+        //--VERIFICAR E TERMINAR---
+        aux = this->getFirstNode();
+        Edge* aux3;
+        for(aux3 = aux->getFirstEdge(); aux3 != nullptr; aux3 = aux3->getNextEdge()){
 
-
-
+        }
+    }
 }
 
 
