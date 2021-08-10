@@ -267,21 +267,6 @@ void Graph::buscaEmProfundidade(int v){
 }
 
 
-void Graph::removeNode(int id){
-    if(searchNode(id)){
-        for(Node* aux = this->first_node; aux != nullptr; aux = aux->getNextNode()){
-            if(aux->getNextNode()->getId() == id){
-                Node* aux2 = aux->getNextNode(); // selected id
-                aux2->removeAllEdges();
-                aux->setNextNode(aux2->getNextNode());
-                delete aux2;
-            }
-        }
-    } else {
-        cout << "Node not found!" << endl;
-    }
-}
-
 bool Graph::searchNode(int id)
 {
     if(this->first_node != nullptr){
@@ -302,7 +287,7 @@ void Graph::breadthFirstSearch(ofstream &output_file){
 void Graph::fechoTransitivoDireto(int idNode){
 
     Graph* novo = new Graph(0,this->directed, this->weighted_edge, this->weighted_node);
-    novo->insertNode(idNode);
+
     Node* no;
     Edge* aresta;
 
@@ -323,27 +308,105 @@ void Graph::fechoTransitivoDireto(int idNode){
 
 
 
+void Graph::removeNode(int id){
+
+     // Verifies whether the edge to remove is in the node
+    if(this->searchNode(id)){
+
+        Node* aux = this->first_node;
+        Node* previous = nullptr;
+        // Searching for the edge to be removed
+        while(aux->getId() != id){
+            previous = aux;
+            aux = aux->getNextNode();
+        }
+        // Keeping the integrity of the edge list
+
+        if(previous != nullptr)
+            previous->setNextNode(aux->getNextNode());
+
+        else
+            this->first_node = aux->getNextNode();
+
+        if(aux == this->last_node)
+            this->last_node = previous;
+
+        if(aux->getNextNode() == this->last_node)
+            this->last_node = aux->getNextNode();
+
+        delete aux;
+
+
+        aux = this->first_node;
+
+        cout << "verificando arestas para o no " << id << endl;
+
+        while(aux != nullptr){
+
+        Edge* aresta = aux->getFirstEdge();
+
+        while(aresta != nullptr){
+
+            if(aresta->getTargetId() == id){
+
+                aux->removeEdge(id, false, aux);
+                break;
+            }
+
+            aresta = aresta->getNextEdge();
+        }
+
+        aux = aux->getNextNode();
+        }
+
+    }else{
+
+ cout << "Not Found " << endl;
+    }
+}
+
 void Graph::fechoTransitivoIndireto(int idNode){
 
     Graph* novo = new Graph(0,this->directed, this->weighted_edge, this->weighted_node);
+
+
     novo->insertNode(idNode);
-    Node* no;
+    Node* no = this->first_node;
     Edge* aresta;
 
+    while(no != nullptr){
 
-    for (no = this->getNode(idNode); no != nullptr; no = no->getNextNode())
-    {
-        aresta = this->getNode(no->getId())->getFirstEdge();
+         aresta = no->getFirstEdge();
 
-        while ( aresta != nullptr){
+        while(aresta != nullptr){
 
-            if(aresta->getTargetId() == no->getId()){
 
-            novo->insertEdge(no->getId(),aresta->getTargetId(), aresta->getWeight());
+            novo->insertEdge(no->getId(), aresta->getTargetId(), aresta->getWeight());
             aresta = aresta->getNextEdge();
-            }
         }
+
+        no = no->getNextNode();
     }
+
+
+
+    for (no = this->getFirstNode(); no != nullptr; no = no->getNextNode())
+    {
+
+         float distancia = 0;
+         if(no->getId() != idNode){
+                distancia = this->floydMarshallNoOutPut(no->getId(),idNode);
+         }
+
+         if(distancia >= 9999){
+            cout << "removendo no " << no->getId() << endl;
+            novo->removeNode(no->getId());
+         }
+
+
+    }
+
+
 
     novo->printarGrafo();
 }
@@ -414,6 +477,63 @@ float Graph::floydMarshall(int idSource, int idTarget, ofstream& arquivo_saida){
     arquivo_saida << endl;
     arquivo_saida <<  "Distancia entre os vertices " << dist[idSource][idTarget] << endl;
     arquivo_saida << "--------------------------------------------------------------------------------------------------------" << endl;
+
+return dist[idSource][idTarget];
+
+}
+
+
+
+float Graph::floydMarshallNoOutPut(int idSource, int idTarget){
+
+
+    int V = this->order+1;
+    int dist[V][V], i, j, k;
+    Edge* aresta;
+    Node* no;
+    int anterior[V][V];
+
+      for (i = 0; i < V; i++)
+        {
+            for (j = 0; j < V; j++)
+            {
+                 anterior[i][j] = idSource;
+                    if( i == j ){
+                        dist[i][j] = 0;
+                    }else{
+                    dist[i][j] = 9999;
+                    }
+            }
+        }
+
+    for (no = this->first_node; no != nullptr ; no = no->getNextNode())
+    {
+        aresta = no->getFirstEdge();
+        while ( aresta != nullptr){
+
+            dist[no->getId()][aresta->getTargetId()] = aresta->getWeight();
+            if(!this->directed){
+              dist[aresta->getTargetId()][no->getId()] = aresta->getWeight();
+            }
+            aresta = aresta->getNextEdge();
+
+        }
+    }
+
+    for (k = 0; k < V; k++)
+    {
+        for (i = 0; i < V; i++)
+        {
+            for (j = 0; j < V; j++)
+            {
+                if (dist[i][k] + dist[k][j] < dist[i][j]){
+                    dist[i][j] = dist[i][k] + dist[k][j];
+                    anterior[i][j] = k;
+
+                }
+            }
+        }
+    }
 
 return dist[idSource][idTarget];
 
@@ -830,21 +950,21 @@ void Graph::ordenacaoTopologica(){
     int i = 0; //contador das posicoes de initialNodes[]
 
     //Inserindo os grafos com grau de entrada 0 no vetor
-    Node* aux; 
+    Node* aux;
     for(aux = this->first_node; aux != nullptr; aux = aux->getNextNode()){
         if(aux->getInDegree() == 0){
-            initialNodes[i] = aux->getId(); 
+            initialNodes[i] = aux->getId();
             i++;
         }
     }
-    
+
     int nodes [getOrder()]; //Vetor que armazena os valores na ordem
     int t = 0; //contador para o vetor
     int aux2; //auxiliar para atribuir os valores
-    while(initialNodes[0] != null){
+   // while(initialNodes[0] != nullptr){
         aux2 = initialNodes[i - 1];
         i--;
-        initialNodes[i] = null;
+       // initialNodes[i] = null;
         nodes[t] = 0;
         t++;
 
@@ -853,7 +973,7 @@ void Graph::ordenacaoTopologica(){
         Edge* aux3;
         for(aux3 = aux->getFirstEdge(); aux3 != nullptr; aux3 = aux3->getNextEdge()){
 
-        }
+     //   }
     }
 }
 

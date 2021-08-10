@@ -54,6 +54,7 @@ class Graph{
         Graph* agmKuskal(ofstream &arquivo_saida);
         Graph* agmPrim(ofstream& arquivo_saida);
         float floydMarshall(int idSource, int idTarget, ofstream& arquivo_saida);
+        float floydMarshallNoOutPut(int idSource, int idTarget);
         float dijkstra(int idSource, int idTarget, ofstream& arquivo_saida);
         void printarGrafo();
         void printarInfos();
