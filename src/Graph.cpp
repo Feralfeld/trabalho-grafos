@@ -12,6 +12,7 @@
 #include <float.h>
 #include <iomanip>
 #include <stack>
+// #include <vector>
 #define INFINITO 99999999
 
 
@@ -164,38 +165,38 @@ void Graph::insertEdge(int id, int target_id, float weight)
     Node* aux = this->getNode(id);
     if(id == target_id){
 
-    }else{
+    } else {
 
-    bool flagErroEntrada = false;
-    if(aux == nullptr){
-        this->insertNode(id);
-        aux = this->getNode(id);
-        aux->insertEdge(target_id,weight);
-        this->number_edges++;
-    }else{
-         if(aux->searchEdge(target_id)){
-            bool flagErroEntrada = true;
-         }else{
-             Node* aux2 = this->getNode(target_id);
-             if(aux2 != nullptr){
-                if(aux2->searchEdge(id)){
+        bool flagErroEntrada = false;
+        if(aux == nullptr){
+            this->insertNode(id);
+            aux = this->getNode(id);
+            aux->insertEdge(target_id,weight);
+            this->number_edges++;
+        } else{
+            if(aux->searchEdge(target_id)){
+                bool flagErroEntrada = true;
+            }else{
+                Node* aux2 = this->getNode(target_id);
+                if(aux2 != nullptr){
+                    if(aux2->searchEdge(id)){
+                    }else{
+                    aux->insertEdge(target_id,weight);
+                    this->number_edges++;
+                    }
                 }else{
-                  aux->insertEdge(target_id,weight);
-                  this->number_edges++;
+                aux->insertEdge(target_id,weight);
+                this->number_edges++;
                 }
-             }else{
-              aux->insertEdge(target_id,weight);
-              this->number_edges++;
-             }
-         }
-    }
+            }
+        }
 
-    if(getNode(target_id) == nullptr){
-            this->insertNode(target_id);
+        if(getNode(target_id) == nullptr){
+                this->insertNode(target_id);
+        }
     }
-
-
-    }
+    this->getNode(id)->incrementOutDegree();
+    this->getNode(target_id)->incrementInDegree();
 }
 
 
@@ -941,40 +942,67 @@ void Graph::printarGrafoGraphviz(){
     }
      output_file << endl;
     output_file << "}";
-    }
+}
 
 
 
 void Graph::ordenacaoTopologica(){
-    int initialNodes [getOrder()]; // vetor que vai armazenar os vertices com grau de entrada 0
-    int i = 0; //contador das posicoes de initialNodes[]
 
-    //Inserindo os grafos com grau de entrada 0 no vetor
+    vector<int> saveNodesInDegree;
+    
     Node* aux;
     for(aux = this->first_node; aux != nullptr; aux = aux->getNextNode()){
+        saveNodesInDegree.push_back(aux->getInDegree());
+    }
+
+    vector<int> initialNodes;
+    // int i = 0;
+
+    //Inserindo os grafos com grau de entrada 0 no vetor
+    for(aux = this->first_node; aux != nullptr; aux = aux->getNextNode()){
         if(aux->getInDegree() == 0){
-            initialNodes[i] = aux->getId();
-            i++;
+            initialNodes.push_back(aux->getId());
         }
     }
 
-    int nodes [getOrder()]; //Vetor que armazena os valores na ordem
-    int t = 0; //contador para o vetor
+    vector<int> nodes;
     int aux2; //auxiliar para atribuir os valores
-   // while(initialNodes[0] != nullptr){
-        aux2 = initialNodes[i - 1];
-        i--;
-       // initialNodes[i] = null;
-        nodes[t] = 0;
-        t++;
 
-        //--VERIFICAR E TERMINAR---
-        aux = this->getFirstNode();
-        Edge* aux3;
-        for(aux3 = aux->getFirstEdge(); aux3 != nullptr; aux3 = aux3->getNextEdge()){
+    while(!initialNodes.empty()){
+        cout << "nos no initial: " << initialNodes.size() << endl;
+        for(int i = 0; i <initialNodes.size(); i++){
+            cout << "- " << initialNodes[i] << endl;
+        }
+        aux2 = initialNodes[0];
+        initialNodes.erase(initialNodes.begin());
+        nodes.push_back(aux2);
 
-     //   }
+        aux = this->getNode(aux2);
+        if(aux->hasEdgeBetween(aux->getNextNode()->getId())){ // *
+            for(Edge *auxEdge = aux->getFirstEdge(); auxEdge != nullptr; auxEdge = auxEdge->getNextEdge()){
+                aux->getNextNode()->decrementInDegree();
+                if(aux->getNextNode()->getInDegree() == 0){
+                    aux = aux->getNextNode();
+                    initialNodes.push_back(aux->getId());
+                }
+            }
+        }
+    }
+
+    cout << "ORDEM: {";
+    for(int i = 0; i < (int)nodes.size(); i++){
+        if(i == 0){
+            cout << nodes[i];
+        } else {
+            cout << ", " << nodes[i]; 
+        }
+    }
+    cout << "}" << endl;
+
+    int i = 0;
+    for(aux = this->first_node; aux != nullptr; aux = aux->getNextNode()){
+        aux->setInDegree(saveNodesInDegree[i]);
     }
 }
-
+    
 

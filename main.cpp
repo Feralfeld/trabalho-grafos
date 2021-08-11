@@ -199,7 +199,11 @@ void selecionar(int selecao, Graph* graph, ofstream& output_file){
             //Ordenação Topologica;
         case 8:{
                 cout << "PRINTANDO ORDENACAO TOPOLOGICA" << endl;
-                graph->ordenacaoTopologica();
+                if(graph->getDirected() == 0){
+                    cout << "O grafo deve ser direcionado!" << endl;
+                } else {
+                    graph->ordenacaoTopologica();
+                }
             break;
         }
 
@@ -207,6 +211,7 @@ void selecionar(int selecao, Graph* graph, ofstream& output_file){
                 cout << "PRINTANDO informacoes" << endl;
                 graph->printarGrafoGraphviz();
                 graph->printarInfos();
+                graph->printarGrafo();
             break;
         }
 

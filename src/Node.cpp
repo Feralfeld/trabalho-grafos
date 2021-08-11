@@ -103,6 +103,7 @@ void Node::insertEdge(int target_id, float weight){
         edge->setWeight(weight);
         this->last_edge->setNextEdge(edge);
         this->last_edge = edge;
+        // this->getNextNode()->in_degree++;
 
     }
     else{
@@ -110,7 +111,7 @@ void Node::insertEdge(int target_id, float weight){
         this->first_edge = new Edge(target_id);
         this->first_edge->setWeight(weight);
         this->last_edge = this->first_edge;
-
+        // this->getNextNode()->in_degree++;    
     }
 
 }
@@ -199,6 +200,10 @@ void Node::incrementInDegree(){
 
     this->in_degree++;
 
+}
+
+void Node::setInDegree(int degree){
+    this->in_degree = degree;
 }
 
 void Node::incrementOutDegree(){
