@@ -8,6 +8,7 @@
 #include <fstream>
 #include <stack>
 #include <list>
+#include <vector>
 
 using namespace std;
 
@@ -61,7 +62,6 @@ class Graph{
         void buscaEmProfundidade(int idNode);
         void printarGrafoGraphviz();
         void ordenacaoTopologica();
-
 
         //methods phase1
         float greed();
