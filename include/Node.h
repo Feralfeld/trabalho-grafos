@@ -21,10 +21,12 @@ class Node{
         float weight;
         Node* next_node;
         Node* previous_node;
+        int group;
 
     public:
         // Constructor
         Node(int id);
+        Node(int id, int group);
         // Destructor
         ~Node();
         // Getters
@@ -33,6 +35,7 @@ class Node{
         int getId();
         int getInDegree();
         int getOutDegree();
+        int getGroup();
         float getWeight();
         Node* getNextNode();
         // Setters

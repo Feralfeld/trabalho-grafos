@@ -54,7 +54,7 @@ void Graph::printarGrafo(){
                  if(aux->getFirstEdge() != nullptr){
                 for(Edge* aux2 = aux->getFirstEdge(); aux2 != nullptr; aux2 = aux2->getNextEdge()){
                     cout << endl;
-                    cout << aux->getId() <<  " -- "<< aux2->getTargetId() << "|" << aux2->getWeight();
+                    cout << aux->getId() << ":" << aux->getGroup() <<  " -- "<< aux2->getTargetId() << "|" << aux2->getWeight();
                 }
             }
         }
@@ -133,6 +133,25 @@ Node *Graph::getLastNode()
 void Graph::insertNode(int id)
 {
     Node* no = new Node(id);
+    no->setNextNode(nullptr);
+    //no->setAnteriorNo(nullptr);
+
+    if(this->getLastNode() == nullptr){
+            this->first_node= no;
+            this->last_node = no;
+    }else{
+        //no->setAnteriorNo(this->ultimo_no);
+        this->last_node->setNextNode(no);
+        this->last_node = no;
+    }
+    //this->order++;
+    //this->numeroNos++;
+}
+
+
+void Graph::insertNodeGroup(int id, int group)
+{
+    Node* no = new Node(id, group);
     no->setNextNode(nullptr);
     //no->setAnteriorNo(nullptr);
 
@@ -915,7 +934,6 @@ void Graph::printarGrafoGraphviz(){
         }
     }
     }
-    output_file << '}' << endl ;
     }else{
         cout << "O grafo � direcionado" << endl;
         output_file << "digraph Grafo {";
@@ -949,7 +967,7 @@ void Graph::printarGrafoGraphviz(){
 void Graph::ordenacaoTopologica(){
 
     vector<int> saveNodesInDegree;
-    
+
     Node* aux;
     for(aux = this->first_node; aux != nullptr; aux = aux->getNextNode()){
         saveNodesInDegree.push_back(aux->getInDegree());
@@ -994,7 +1012,7 @@ void Graph::ordenacaoTopologica(){
         if(i == 0){
             cout << nodes[i];
         } else {
-            cout << ", " << nodes[i]; 
+            cout << ", " << nodes[i];
         }
     }
     cout << "}" << endl;
@@ -1004,5 +1022,5 @@ void Graph::ordenacaoTopologica(){
         aux->setInDegree(saveNodesInDegree[i]);
     }
 }
-    
+
 

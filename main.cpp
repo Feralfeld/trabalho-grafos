@@ -12,6 +12,59 @@
 
 using namespace std;
 
+/*
+As instâncias estão divididas em 5 cinco grupos, de acordo com o método utilizado para criá-las: "clu", "gr3", "gr5", "gr7" e "gr10".
+O nome da instância identifica o número de grupos que a instância possui, a instância do TSP segundo a qual foi criada,
+ o número de vértices e o método de criação. A instância "10att40.clu" , por exemplo, tem 10 grupos,
+  48 vértices, foi gerada a partir da instância "att" do TSP e com o método "clustering center".
+   Como disse, mais detalhes sobre a geração dessas instâncias você pode pegar na minha dissertação.
+
+Agora, sobre o formato dos arquivos:
+
+O arquivo exibe primeiramente o grupo a que cada vértice pertence.
+Abrindo a instância 10att48.clu você pode ver que há 48 linhas com um número que varia entre 1 e 10.
+A primeira linha contém o grupo em que está o vértice 0, a segunda contém o grupo do  vértice 2,
+a terceira contém o grupo do vértice 3, e assim sucessivamente. Você pode enumerar os vértices de 0 a n-1, sendo n o número de vértices.
+
+Há uma linha em branco e em seguida vem a informação sobre as arestas. Todas as instâncias possuem grafos completos e simétricos.
+Assim, há uma aresta entre cada par de vértices que possui o mesmo custo na ida e na volta. Cada linha após o espaço
+em branco traz informação sobre uma determinada aresta. Na linha aparecem os dois vértices e depois o custo
+(que eu obtive através das coordenadas presentes nos arquivos ".coo") Observe que a linha 50 da instância 10att48.clu é "0 1 4727".
+ Isso informa que as arestas 0-1 e 1-0 têm custo 4727.*/
+Graph* leituraInstanciaPAGMG(ifstream& input_file, int lineCount){
+
+    int idNodeSource;
+    int idNodeTarget;
+    int pesoAresta;
+    int grupo;
+    int order;
+    bool directed = false;
+    bool weightedEdge = true;
+    bool weightedNode = false;
+
+    //Criando objeto grafo
+    Graph* graph = new Graph(order, directed, weightedEdge, weightedNode);
+    int totalCountar = 0;
+    int noCounter = 0;
+    while(noCounter < lineCount && input_file >> grupo) {
+        graph->insertNodeGroup(noCounter,grupo);
+        noCounter++;
+        totalCountar++;
+    }
+
+    //Leitura de arquivo
+    while(input_file >> idNodeSource >> idNodeTarget >> pesoAresta) {
+        graph->insertEdge(idNodeSource, idNodeTarget, pesoAresta);
+        totalCountar++;
+    }
+
+    //cout << "QUANTIDADE DE GRUPOS" << graph->getQuantidadeGrupos() << endl;
+    return graph;
+}
+
+
+
+
 Graph* leitura(ifstream& input_file, int directed, int weightedEdge, int weightedNode){
 
     //Variáveis para auxiliar na criação dos nós no Grafo
@@ -265,10 +318,49 @@ int main(int argc, char const *argv[]) {
     string input_file_name(argv[1]);
 
     string instance;
+
     if(input_file_name.find("v") <= input_file_name.size()){
         string instance = input_file_name.substr(input_file_name.find("v"));
         cout << "Running " << program_name << " with instance " << instance << " ... " << endl;
     }
+
+
+    int auxGrupos = 0;
+    int auxNodes = 0;
+    char ch;
+    bool flag = false;
+    bool flag2 = false;
+    string cstring = "0";
+    string cstringaux = "0";
+    int l = input_file_name.length();
+
+
+    // Analisa fileName para saber se é instancia PAGGM
+    for (int i = 0; i < l; i++) {
+        ch = input_file_name.at(i);
+        if(flag){
+         if(isdigit(ch)){
+            if(flag2){
+        cstring = cstring + ch;
+            }else{
+        cstringaux = cstringaux + ch;
+            }
+        }else{
+        flag2 = true;
+        }
+        }else{
+            if(ch == '/'){
+                flag = true;
+            }
+        }
+    }
+
+    auxGrupos = stoi(cstringaux);
+    auxNodes = stoi(cstring);
+
+    cout << "printando grupos " << auxGrupos << endl;
+    cout << "printando nodes " << auxNodes << endl;
+
 
     //Abrindo arquivo de entrada
     ifstream input_file;
@@ -282,8 +374,13 @@ int main(int argc, char const *argv[]) {
 
     if(input_file.is_open()){
 
+        if(auxGrupos < 1){
+         cout << "Leitura grafo normal" << endl;
         graph = leitura(input_file, atoi(argv[3]), atoi(argv[4]), atoi(argv[5]));
-
+        }else{
+         cout << "Leitura grafo PAGGM" << endl;
+         graph = leituraInstanciaPAGMG(input_file, auxNodes);
+        }
     }else
         cout << "Unable to open " << argv[1];
 

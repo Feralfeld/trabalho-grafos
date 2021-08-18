@@ -18,7 +18,19 @@ Node::Node(int id){
     this->first_edge = nullptr;
     this->last_edge = nullptr;
     this->next_node = nullptr;
+    this->group = -1;
+};
 
+Node::Node(int id, int group){
+
+    this->id = id;
+    this->in_degree = 0;
+    this->out_degree = 0;
+    this->weight = 0;
+    this->first_edge = nullptr;
+    this->last_edge = nullptr;
+    this->next_node = nullptr;
+    this->group = group;
 };
 
 // Destructor
@@ -53,6 +65,10 @@ int Node::getId(){
 
     return this->id;
 
+}
+
+int Node::getGroup(){
+    return this->group;
 }
 
 int Node::getInDegree(){
@@ -111,7 +127,7 @@ void Node::insertEdge(int target_id, float weight){
         this->first_edge = new Edge(target_id);
         this->first_edge->setWeight(weight);
         this->last_edge = this->first_edge;
-        // this->getNextNode()->in_degree++;    
+        // this->getNextNode()->in_degree++;
     }
 
 }
