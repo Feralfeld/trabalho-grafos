@@ -1023,4 +1023,14 @@ void Graph::ordenacaoTopologica(){
     }
 }
 
+void Graph::guloso(){
+    
+}
 
+void Graph::gulosoRandomizado(){
+    
+}
+
+void Graph::gulosoRandomizadoReativo(){
+    
+}

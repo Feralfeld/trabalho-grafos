@@ -166,7 +166,10 @@ int menu(){
     cout << "[6] Arvore Geradora Minima de Kruskal" << endl;
     cout << "[7] Imprimir caminhamento em profundidade" << endl;
     cout << "[8] Imprimir ordenacao topologica" << endl;
-    cout << "[9] Imprimir informacoes do grafo" << endl;
+    cout << "[9] Algoritmo Guloso (PAGMG)" << endl;
+    cout << "[10] Algoritmo Guloso Randomizado (PAGMG)" << endl;
+    cout << "[11] Algoritmo Guloso Randomizado Reativo (PAGMG)" << endl;
+    cout << "[12] Imprimir informacoes do grafo" << endl;
 
     cin >> selecao;
 
@@ -260,7 +263,40 @@ void selecionar(int selecao, Graph* graph, ofstream& output_file){
             break;
         }
 
-          case 9:{
+        // Algoritmo guloso;
+        case 9:{
+            if(graph->getDirected() == 1){
+                cout << "O grafo nao pode ser direcionado...";
+            } else {
+                cout << "PRINTANDO ALGORITMO GULOSO" << endl;
+                graph->guloso();
+            }
+            break;
+        }
+
+        // Algoritmo guloso randomizado;
+        case 10:{
+            if(graph->getDirected() == 1){
+                cout << "O grafo nao pode ser direcionado...";
+            } else {
+                cout << "PRINTANDO ALGORITMO GULOSO RANDOMIZADO" << endl;
+                graph->gulosoRandomizado();
+            }
+             break;
+        }
+
+        // Algoritmo guloso randomizado reativo;
+        case 11:{
+            if(graph->getDirected() == 1){
+                cout << "O grafo nao pode ser direcionado...";
+            } else {
+                cout << "PRINTANDO ALGORITMO GULOSO RANDOMIZADO REATIVO" << endl;
+                graph->gulosoRandomizadoReativo();
+            }
+             break;
+        }
+
+        case 12:{
                 cout << "PRINTANDO informacoes" << endl;
                 graph->printarGrafoGraphviz();
                 graph->printarInfos();

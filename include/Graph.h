@@ -70,6 +70,10 @@ class Graph{
         float greedRandom();
         float greedRactiveRandom();
 
+        // Métodos Entrega 2
+        void guloso();
+        void gulosoRandomizado();
+        void gulosoRandomizadoReativo();
 
         int minDistance(int dist[], bool sptSet[]);
     private:
