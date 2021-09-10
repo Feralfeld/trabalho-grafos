@@ -14,9 +14,10 @@
 #include <stack>
 // #include <vector>
 #define INFINITO 99999999
+#include<bits/stdc++.h>
 
+using namespace std::chrono;
 
-using namespace std;
 
 /**************************************************************************************************
  * Defining the Graph's methods
@@ -54,7 +55,7 @@ void Graph::printarGrafo(){
                  if(aux->getFirstEdge() != nullptr){
                 for(Edge* aux2 = aux->getFirstEdge(); aux2 != nullptr; aux2 = aux2->getNextEdge()){
                     cout << endl;
-                    cout << aux->getId() << ":" << aux->getGroup() <<  " -- "<< aux2->getTargetId() << "|" << aux2->getWeight();
+                    cout << aux->getGroup()<< ":" << aux->getId()  <<  " -- "<< aux2->getTargetId() << "|" << aux2->getWeight();
                 }
             }
         }
@@ -151,6 +152,9 @@ void Graph::insertNode(int id)
 
 void Graph::insertNodeGroup(int id, int group)
 {
+    if(group > this->getGroupSize()){
+        this->groupSize = group;
+    }
     Node* no = new Node(id, group);
     no->setNextNode(nullptr);
     //no->setAnteriorNo(nullptr);
@@ -330,6 +334,7 @@ void Graph::fechoTransitivoDireto(int idNode){
 
 void Graph::removeNode(int id){
 
+    cout << "removendo no " << id << endl;
      // Verifies whether the edge to remove is in the node
     if(this->searchNode(id)){
 
@@ -359,7 +364,7 @@ void Graph::removeNode(int id){
 
         aux = this->first_node;
 
-        cout << "verificando arestas para o no " << id << endl;
+        //cout << "verificando arestas para o no " << id << endl;
 
         while(aux != nullptr){
 
@@ -383,6 +388,7 @@ void Graph::removeNode(int id){
 
  cout << "Not Found " << endl;
     }
+    cout << "removido com sucesso" << endl;
 }
 
 void Graph::fechoTransitivoIndireto(int idNode){
@@ -963,6 +969,10 @@ void Graph::printarGrafoGraphviz(){
 }
 
 
+int Graph::getGroupSize(){
+    return this->groupSize;
+}
+
 
 void Graph::ordenacaoTopologica(){
 
@@ -1023,14 +1033,150 @@ void Graph::ordenacaoTopologica(){
     }
 }
 
-void Graph::guloso(){
-    
+
+Node* Graph::heuristica(int grupo){
+
+  int menorPeso = 9999;
+   Node* auxNode = nullptr;
+   Edge* auxEdge = nullptr;
+
+  for(Node* aux = this->first_node; aux != nullptr; aux = aux->getNextNode()){
+    if(aux->getGroup() == grupo){
+
+        for(Edge* aux2 = aux->getFirstEdge(); aux2 != nullptr; aux2 = aux2->getNextEdge()){
+
+        if(aux2->getWeight() < menorPeso){
+            auxNode = new Node(aux->getId(), aux->getGroup());
+            auxEdge = new Edge(aux2->getTargetId());
+            auxEdge->setWeight(aux2->getWeight());
+        }
+        }
+    }
+   }
+
+   auxNode->insertEdge(auxEdge->getTargetId(), auxEdge->getWeight());
+   return auxNode;
+}
+
+
+bool Graph::possuiGrupo(int grupo){
+
+  for(Node* aux = this->first_node; aux != nullptr; aux = aux->getNextNode()){
+    if(aux->getGroup() == grupo){
+            return true;
+    }
+   }
+
+    return false;
+}
+
+
+void Graph::removeTodosDoGrupo(int grupo, int nodeNotDeleted){
+
+    cout << "removendo todos do grupo" << endl;
+   for(Node* aux = this->first_node; aux != nullptr; aux = aux->getNextNode()){
+
+        if(aux->getGroup() == grupo && aux->getId() != nodeNotDeleted){
+
+                        this->removeNode(aux->getId());
+        }
+
+   }
+  cout  << "todos do grupo removidos" << endl;
+}
+
+
+void Graph::guloso(ofstream& arquivo_saida){
+arquivo_saida << "---------Algoritmo Guloso PAGMG---------" << endl;
+    arquivo_saida << "[No_Origem -- No_Destino] - Peso" << endl;
+    arquivo_saida << "-----------------------------" << endl;
+    auto start = high_resolution_clock::now();
+
+ //INICIO DO PROCESSO
+    Graph* candidatos = new Graph(this->order, false,true,false);
+    Graph* arvoreAGM = new Graph(this->order, false,true,false);
+    int somatorioPeso = 0;
+
+
+        for(Node* aux = this->first_node; aux != nullptr; aux = aux->getNextNode()){
+                 candidatos->insertNodeGroup(aux->getId(), aux->getGroup());
+        }
+
+
+   for(Node* aux = this->first_node; aux != nullptr; aux = aux->getNextNode()){
+        for(Edge* aux2 = aux->getFirstEdge(); aux2 != nullptr; aux2 = aux2->getNextEdge()){
+        candidatos->insertEdge(aux->getId(), aux2->getTargetId(), aux2->getWeight());
+        }
+   }
+
+
+   candidatos->printarGrafo();
+
+    int quantidadeGrupo = this->getGroupSize();
+    cout << "tamanho do grupo " << this->getGroupSize() << endl;
+
+    int auxGrupo = 1;
+    Node* auxNode = nullptr;
+
+    while(auxGrupo <= this->getGroupSize()){
+
+            cout << "Grupo analisado" << auxGrupo << endl;
+
+            auxNode = candidatos->heuristica(auxGrupo); //Retorna 1 nó e 1 aresta
+
+            cout << "Verificando no" << auxNode->getId() << endl;
+
+            if(auxGrupo != 1){
+                 Node* auxDoIDo = candidatos->getNode(auxNode->getId());
+                 if(arvoreAGM->possuiGrupo(auxDoIDo->getGroup())){
+
+                    arvoreAGM->insertNodeGroup(auxNode->getId(), auxNode->getGroup());
+                    arvoreAGM->insertEdge(auxNode->getId(),auxNode->getFirstEdge()->getTargetId(),auxNode->getFirstEdge()->getWeight());
+                    candidatos->removeTodosDoGrupo(auxGrupo, auxNode->getId());
+
+                 }else{
+                    //não passa na condição
+                 }
+            }else{
+                arvoreAGM->insertNodeGroup(auxNode->getId(), auxNode->getGroup());
+                arvoreAGM->insertEdge(auxNode->getId(),auxNode->getFirstEdge()->getTargetId(),auxNode->getFirstEdge()->getWeight());
+
+                candidatos->removeTodosDoGrupo(auxGrupo, auxNode->getId());
+            }
+
+        auxGrupo++;
+    }
+
+  //remover todos os nós do grupo para que apenas possa ligar ao mesmo já existente
+            //verifica se a aresta liga a um grupo ja inserido, só pode arestas em grupos que ja estão na solução
+            // se sim adicionar e passar para o proximo grupo, se não busca outra aresta
+
+     auto stop = high_resolution_clock::now();
+
+     auto duration = duration_cast<microseconds>(stop - start);
+     double tempoEmSegundos = duration.count() / 1000000.0;
+     cout << "Tempo em segundos " << tempoEmSegundos << endl;
+     arquivo_saida << "Tempo em segundos " << tempoEmSegundos << endl;
+
+     arquivo_saida << "------------ArvorePAGMG-------" << endl;
+     //arvoreAGM->printarGrafoArquivo(arquivo_saida);
+     arquivo_saida << "Total de arestas " << arvoreAGM->getNumberEdges() << endl;
+     arquivo_saida << "Somatorio Peso Arestas " <<  somatorioPeso << endl;
+
+     cout << "------------ArvorePAGMG--------" << endl;
+     arvoreAGM->printarGrafo();
+     //arvoreAGM->printarGrafoGraphviz(graphviz);
+
+     cout << "Total de arestas " << arvoreAGM->getNumberEdges() << endl;
+     cout << "Somatorio Peso Arestas " <<  somatorioPeso << endl;
+     // return arvoreAGM;
 }
 
 void Graph::gulosoRandomizado(){
-    
+
 }
 
+
 void Graph::gulosoRandomizadoReativo(){
-    
+
 }

@@ -32,6 +32,7 @@ class Graph{
         ~Graph();
         //Getters
         int getOrder();
+        int getGroupSize();
         int getNumberEdges();
         bool getDirected();
         bool getWeightedEdge();
@@ -70,8 +71,12 @@ class Graph{
         float greedRandom();
         float greedRactiveRandom();
 
+        Node* heuristica(int grupo);
+        void removeTodosDoGrupo(int grupo, int nodeNotDeleted);
+        bool possuiGrupo(int grupo);
+
         // Métodos Entrega 2
-        void guloso();
+        void guloso(ofstream& arquivo_saida);
         void gulosoRandomizado();
         void gulosoRandomizadoReativo();
 

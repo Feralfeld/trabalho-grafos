@@ -12,25 +12,7 @@
 
 using namespace std;
 
-/*
-As instâncias estão divididas em 5 cinco grupos, de acordo com o método utilizado para criá-las: "clu", "gr3", "gr5", "gr7" e "gr10".
-O nome da instância identifica o número de grupos que a instância possui, a instância do TSP segundo a qual foi criada,
- o número de vértices e o método de criação. A instância "10att40.clu" , por exemplo, tem 10 grupos,
-  48 vértices, foi gerada a partir da instância "att" do TSP e com o método "clustering center".
-   Como disse, mais detalhes sobre a geração dessas instâncias você pode pegar na minha dissertação.
 
-Agora, sobre o formato dos arquivos:
-
-O arquivo exibe primeiramente o grupo a que cada vértice pertence.
-Abrindo a instância 10att48.clu você pode ver que há 48 linhas com um número que varia entre 1 e 10.
-A primeira linha contém o grupo em que está o vértice 0, a segunda contém o grupo do  vértice 2,
-a terceira contém o grupo do vértice 3, e assim sucessivamente. Você pode enumerar os vértices de 0 a n-1, sendo n o número de vértices.
-
-Há uma linha em branco e em seguida vem a informação sobre as arestas. Todas as instâncias possuem grafos completos e simétricos.
-Assim, há uma aresta entre cada par de vértices que possui o mesmo custo na ida e na volta. Cada linha após o espaço
-em branco traz informação sobre uma determinada aresta. Na linha aparecem os dois vértices e depois o custo
-(que eu obtive através das coordenadas presentes nos arquivos ".coo") Observe que a linha 50 da instância 10att48.clu é "0 1 4727".
- Isso informa que as arestas 0-1 e 1-0 têm custo 4727.*/
 Graph* leituraInstanciaPAGMG(ifstream& input_file, int lineCount){
 
     int idNodeSource;
@@ -269,7 +251,7 @@ void selecionar(int selecao, Graph* graph, ofstream& output_file){
                 cout << "O grafo nao pode ser direcionado...";
             } else {
                 cout << "PRINTANDO ALGORITMO GULOSO" << endl;
-                graph->guloso();
+                graph->guloso(output_file);
             }
             break;
         }
@@ -420,6 +402,7 @@ int main(int argc, char const *argv[]) {
     }else
         cout << "Unable to open " << argv[1];
 
+    graph->printarGrafo();
 
     mainMenu(output_file, graph);
 
