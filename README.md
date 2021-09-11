@@ -12,4 +12,7 @@ g++ *.cpp -o nomeDaExec.exe
 ./nomeDaExec.exe arquivoInstancia arquivoSaida X X X
 ```
 
-Sendo X no código acima 1 ou 0 reprensentando true ou false para: Grafo Direcionado, Aresta com pesos e Nós com pesos, respectivamente.
+Sendo X no código acima 1 ou 0 reprensentando TRUE ou FALSE para, respectivamente: 
+- Grafo Direcionado
+- Aresta com pesos
+- Nós com pesos
