@@ -157,7 +157,7 @@ int Node::removeEdge(int id, bool directed, Node* target_node){
 
 
     if(this->searchEdge(id)){
-        cout << "removendo aresta " << id << "--" << target_node->getId() << endl;
+       // cout << "removendo aresta " << id << "--" << " No -> " << this->getId() << endl;
 
         Edge* aux = this->first_edge;
         Edge* previous = nullptr;
@@ -169,29 +169,30 @@ int Node::removeEdge(int id, bool directed, Node* target_node){
 
         }
         // Keeping the integrity of the edge list
-        if(previous != nullptr)
+        if(previous != nullptr){
+
             previous->setNextEdge(aux->getNextEdge());
 
-        else
-            this->first_edge = aux->getNextEdge();
+        }else{
+            this->first_edge
+            = aux->getNextEdge();
+        }
 
-        if(aux == this->last_edge)
+        if(aux == this->last_edge){
+
             this->last_edge = previous;
+        }
 
-        if(aux->getNextEdge() == this->last_edge)
+        if(aux->getNextEdge() == this->last_edge){
+
             this->last_edge = aux->getNextEdge();
+}
 
         delete aux;
+
+
         // Verifies whether the graph is directed
-        if(directed)
-            this->decrementOutDegree();
 
-        else{
-
-            this->decrementInDegree();
-            target_node->decrementInDegree();
-
-        }
 
         return 1;
 

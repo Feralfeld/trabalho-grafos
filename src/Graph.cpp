@@ -52,10 +52,15 @@ void Graph::printarGrafo(){
       if(this->first_node != nullptr){
 
         for(Node* aux = this->first_node; aux != nullptr; aux = aux->getNextNode()){
+                    cout << endl;
+                    cout << aux->getGroup()<< ":" << aux->getId();
+        }
+
+        for(Node* aux = this->first_node; aux != nullptr; aux = aux->getNextNode()){
                  if(aux->getFirstEdge() != nullptr){
                 for(Edge* aux2 = aux->getFirstEdge(); aux2 != nullptr; aux2 = aux2->getNextEdge()){
                     cout << endl;
-                    cout << aux->getGroup()<< ":" << aux->getId()  <<  " -- "<< aux2->getTargetId() << "|" << aux2->getWeight();
+                    cout << aux->getId()  <<  " -- "<< aux2->getTargetId() << "|" << aux2->getWeight();
                 }
             }
         }
@@ -235,7 +240,6 @@ void Graph::insertEdgeSemVerificar(int id, int target_id, float weight){
                 this->number_edges++;
             }
 
-
    // this->getNode(id)->incrementOutDegree();
     //this->getNode(target_id)->incrementInDegree();
 
@@ -413,11 +417,38 @@ void Graph::removeNode(int id){
 
 
 void Graph::newRemoveNode(int id){
+
+
     if(this->searchNode(id)){
 
         Node* aux = this->first_node;
+        Node* auxNode = nullptr;
         Node* previous = nullptr;
-        // Searching for the edge to be removed
+
+
+        auxNode = this->first_node;
+
+        while(auxNode != nullptr){
+
+        Edge* aresta = auxNode->getFirstEdge();
+
+        while(aresta != nullptr){
+
+            if(aresta->getTargetId() == id){
+
+                auxNode->removeEdge(id, false, auxNode);
+                break;
+            }
+
+            aresta = aresta->getNextEdge();
+        }
+
+        auxNode = auxNode->getNextNode();
+        }
+
+
+       // cout << "printando grafo apos remocao das arestas" << endl;
+
         while(aux->getId() != id){
             previous = aux;
             aux = aux->getNextNode();
@@ -433,33 +464,9 @@ void Graph::newRemoveNode(int id){
         if(aux == this->last_node)
             this->last_node = previous;
 
-        if(aux->getNextNode() == this->last_node)
-            this->last_node = aux->getNextNode();
 
         delete aux;
 
-
-        aux = this->first_node;
-
-        //cout << "verificando arestas para o no " << id << endl;
-
-        while(aux != nullptr){
-
-        Edge* aresta = aux->getFirstEdge();
-
-        while(aresta != nullptr){
-
-            if(aresta->getTargetId() == id){
-
-                aux->removeEdge(id, false, aux);
-                break;
-            }
-
-            aresta = aresta->getNextEdge();
-        }
-
-        aux = aux->getNextNode();
-        }
 
     }else{
 
@@ -1112,7 +1119,7 @@ void Graph::ordenacaoTopologica(){
 
 Node* Graph::heuristica(int grupo){
 
-  int menorPeso = 9999;
+  int menorPeso = 999999;
    Node* auxNode = nullptr;
    Edge* auxEdge = nullptr;
 
@@ -1121,10 +1128,11 @@ Node* Graph::heuristica(int grupo){
 
         for(Edge* aux2 = aux->getFirstEdge(); aux2 != nullptr; aux2 = aux2->getNextEdge()){
 
-        if(aux2->getWeight() < menorPeso){
+        if(aux2->getWeight() < menorPeso && this->getNode(aux2->getTargetId())->getGroup() != grupo ){
             auxNode = new Node(aux->getId(), aux->getGroup());
             auxEdge = new Edge(aux2->getTargetId());
             auxEdge->setWeight(aux2->getWeight());
+            menorPeso = aux2->getWeight();
         }
         }
     }
@@ -1153,10 +1161,8 @@ void Graph::removeTodosDoGrupo(int grupo, int nodeNotDeleted){
    for(Node* aux = this->first_node; aux != nullptr; aux = aux->getNextNode()){
 
         if(aux->getGroup() == grupo && aux->getId() != nodeNotDeleted){
-                        cout << "removendo no " << aux->getId() << endl;
-                        this->removeNode(aux->getId());
+                        this->newRemoveNode(aux->getId());
         }
-
    }
  // cout  << "todos do grupo removidos" << endl;
 }
@@ -1181,9 +1187,9 @@ arquivo_saida << "---------Algoritmo Guloso PAGMG---------" << endl;
 //PREPARA LISTA DE CANDIDATOS
    for(Node* aux = this->first_node; aux != nullptr; aux = aux->getNextNode()){
         for(Edge* aux2 = aux->getFirstEdge(); aux2 != nullptr; aux2 = aux2->getNextEdge()){
-      candidatos->insertEdge(aux->getId(), aux2->getTargetId(), aux2->getWeight());
-      //  candidatos->insertEdgeSemVerificar(aux->getId(), aux2->getTargetId(), aux2->getWeight());
-       // candidatos->insertEdgeSemVerificar(aux2->getTargetId(),aux->getId(), aux2->getWeight());
+      //candidatos->insertEdge(aux->getId(), aux2->getTargetId(), aux2->getWeight());
+        candidatos->insertEdgeSemVerificar(aux->getId(), aux2->getTargetId(), aux2->getWeight());
+        candidatos->insertEdgeSemVerificar(aux2->getTargetId(),aux->getId(), aux2->getWeight());
         }
    }
 
@@ -1239,7 +1245,7 @@ arquivo_saida << "---------Algoritmo Guloso PAGMG---------" << endl;
                   auxGrupo++;
             }
 
-        candidatos->printarGrafo();
+
 
     }
 
