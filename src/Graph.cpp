@@ -1178,11 +1178,12 @@ arquivo_saida << "---------Algoritmo Guloso PAGMG---------" << endl;
                  candidatos->insertNodeGroup(aux->getId(), aux->getGroup());
         }
 
-
+//PREPARA LISTA DE CANDIDATOS
    for(Node* aux = this->first_node; aux != nullptr; aux = aux->getNextNode()){
         for(Edge* aux2 = aux->getFirstEdge(); aux2 != nullptr; aux2 = aux2->getNextEdge()){
-        candidatos->insertEdgeSemVerificar(aux->getId(), aux2->getTargetId(), aux2->getWeight());
-      //  candidatos->insertEdgeSemVerificar(aux2->getTargetId(),aux->getId(), aux2->getWeight());
+      candidatos->insertEdge(aux->getId(), aux2->getTargetId(), aux2->getWeight());
+      //  candidatos->insertEdgeSemVerificar(aux->getId(), aux2->getTargetId(), aux2->getWeight());
+       // candidatos->insertEdgeSemVerificar(aux2->getTargetId(),aux->getId(), aux2->getWeight());
         }
    }
 
@@ -1196,34 +1197,37 @@ arquivo_saida << "---------Algoritmo Guloso PAGMG---------" << endl;
     int auxJaInseridoGrupo = -1;
     Node* auxNode = nullptr;
 
+
+    // ALGORITMO GULOSO COM CRITERIO DE PARADA E ETC...
     while(auxGrupo <= this->getGroupSize()){
 
             cout << "Grupo analisado" << auxGrupo << endl;
 
             if(auxGrupo != auxJaInseridoGrupo){
-            auxNode = candidatos->heuristica(auxGrupo); //Retorna 1 nó e 1 aresta
-
+            auxNode = candidatos->heuristica(auxGrupo); //Retorna 1 nó e 1 aresta, a aresta de menor peso do grupo
 
             cout << "Verificando no " << auxNode->getId() << "aresta " << auxNode->getFirstEdge()->getTargetId() << endl;
             Node* auxDoIDo = candidatos->getNode(auxNode->getFirstEdge()->getTargetId());
 
             if(auxGrupo != 1){
 
-                 if(arvoreAGM->possuiGrupo(auxDoIDo->getGroup())){
+                 if(arvoreAGM->possuiGrupo(auxDoIDo->getGroup())){  // verificação, verifica se a aresta liga a um no que ja esta na solução, se não elimina, se sim insere na solulçai
 
                     arvoreAGM->insertNodeGroup(auxNode->getId(), auxNode->getGroup());
                     arvoreAGM->insertEdge(auxNode->getId(),auxNode->getFirstEdge()->getTargetId(),auxNode->getFirstEdge()->getWeight());
+
+                    somatorioPeso= somatorioPeso+ auxNode->getFirstEdge()->getWeight();
                     candidatos->removeTodosDoGrupo(auxGrupo, auxNode->getId());
                     auxGrupo++;
                  }else{
                     candidatos->getNode(auxNode->getId())->removeEdge(auxDoIDo->getId(),false,auxDoIDo);
 
-                     //candidatos->removeNode(auxNode->getId());
                  }
-            }else{
+            }else{ // primeira inserção, insere 2 grupos de cara, pois a  aresta liga a 2 extremidades
                 arvoreAGM->insertNodeGroup(auxNode->getId(), auxNode->getGroup());
                 arvoreAGM->insertNodeGroup(auxDoIDo->getId(), auxDoIDo->getGroup());
 
+                 somatorioPeso= somatorioPeso+ auxNode->getFirstEdge()->getWeight();
                 arvoreAGM->insertEdge(auxNode->getId(),auxNode->getFirstEdge()->getTargetId(),auxNode->getFirstEdge()->getWeight());
                 candidatos->removeTodosDoGrupo(auxGrupo, auxNode->getId());
                 candidatos->removeTodosDoGrupo(auxDoIDo->getGroup(), auxDoIDo->getId());
@@ -1239,10 +1243,8 @@ arquivo_saida << "---------Algoritmo Guloso PAGMG---------" << endl;
 
     }
 
-  //remover todos os nós do grupo para que apenas possa ligar ao mesmo já existente
-            //verifica se a aresta liga a um grupo ja inserido, só pode arestas em grupos que ja estão na solução
-            // se sim adicionar e passar para o proximo grupo, se não busca outra aresta
 
+  // RELATORIO FINAL
      auto stop = high_resolution_clock::now();
 
      auto duration = duration_cast<microseconds>(stop - start);
