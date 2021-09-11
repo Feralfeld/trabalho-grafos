@@ -1,8 +1,8 @@
 ---------Algoritmo Guloso PAGMG---------
 [No_Origem -- No_Destino] - Peso
 -----------------------------
-Tempo em segundos 0.093215
+Tempo em segundos 2.29685
 ------------ArvorePAGMG-------
-Total de arestas 1
+Total de arestas 6
 Somatorio Peso Arestas 0
 

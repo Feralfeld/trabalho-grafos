@@ -44,10 +44,13 @@ class Graph{
         void insertNodeGroup(int id, int group);
         void insertEdge(int id, int target_id, float weight);
         void removeNode(int id);
+        void newRemoveNode(int id);
         bool searchNode(int id);
         Node* getNode(int id);
         void bubbleSort();
         void swapNos(Node* primeiro, Node* segundo);
+
+        void insertEdgeSemVerificar(int id, int target_id, float weight);
 
         //methods phase1
         void topologicalSorting();

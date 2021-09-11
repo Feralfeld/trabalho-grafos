@@ -335,12 +335,12 @@ int main(int argc, char const *argv[]) {
     string program_name(argv[0]);
     string input_file_name(argv[1]);
 
-    string instance;
+    //string instance;
 
-    if(input_file_name.find("v") <= input_file_name.size()){
-        string instance = input_file_name.substr(input_file_name.find("v"));
+   // if(input_file_name.find("v") <= input_file_name.size()){
+        string instance = input_file_name.substr(0,input_file_name.find("."));
         cout << "Running " << program_name << " with instance " << instance << " ... " << endl;
-    }
+   // }
 
 
     int auxGrupos = 0;
@@ -350,12 +350,14 @@ int main(int argc, char const *argv[]) {
     bool flag2 = false;
     string cstring = "0";
     string cstringaux = "0";
-    int l = input_file_name.length();
+    //string teste =   input_file_name.split(".")[0];
+
+    int l = instance.length();
 
 
     // Analisa fileName para saber se é instancia PAGGM
     for (int i = 0; i < l; i++) {
-        ch = input_file_name.at(i);
+        ch = instance.at(i);
         if(flag){
          if(isdigit(ch)){
             if(flag2){
@@ -401,8 +403,6 @@ int main(int argc, char const *argv[]) {
         }
     }else
         cout << "Unable to open " << argv[1];
-
-    graph->printarGrafo();
 
     mainMenu(output_file, graph);
 

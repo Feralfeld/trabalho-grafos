@@ -222,6 +222,25 @@ void Graph::insertEdge(int id, int target_id, float weight)
     this->getNode(target_id)->incrementInDegree();
 }
 
+void Graph::insertEdgeSemVerificar(int id, int target_id, float weight){
+
+   Node* aux = this->getNode(id);
+
+        bool flagErroEntrada = false;
+
+            if(aux->searchEdge(target_id)){
+                bool flagErroEntrada = true;
+            }else{
+                aux->insertEdge(target_id,weight);
+                this->number_edges++;
+            }
+
+
+   // this->getNode(id)->incrementOutDegree();
+    //this->getNode(target_id)->incrementInDegree();
+
+}
+
 
 void Graph::buscaEmProfundidade(int v){
     this->printarGrafo();
@@ -334,7 +353,7 @@ void Graph::fechoTransitivoDireto(int idNode){
 
 void Graph::removeNode(int id){
 
-    cout << "removendo no " << id << endl;
+    //cout << "removendo no " << id << endl;
      // Verifies whether the edge to remove is in the node
     if(this->searchNode(id)){
 
@@ -388,7 +407,64 @@ void Graph::removeNode(int id){
 
  cout << "Not Found " << endl;
     }
-    cout << "removido com sucesso" << endl;
+   // cout << "removido com sucesso" << endl;
+}
+
+
+
+void Graph::newRemoveNode(int id){
+    if(this->searchNode(id)){
+
+        Node* aux = this->first_node;
+        Node* previous = nullptr;
+        // Searching for the edge to be removed
+        while(aux->getId() != id){
+            previous = aux;
+            aux = aux->getNextNode();
+        }
+        // Keeping the integrity of the edge list
+
+        if(previous != nullptr)
+            previous->setNextNode(aux->getNextNode());
+
+        else
+            this->first_node = aux->getNextNode();
+
+        if(aux == this->last_node)
+            this->last_node = previous;
+
+        if(aux->getNextNode() == this->last_node)
+            this->last_node = aux->getNextNode();
+
+        delete aux;
+
+
+        aux = this->first_node;
+
+        //cout << "verificando arestas para o no " << id << endl;
+
+        while(aux != nullptr){
+
+        Edge* aresta = aux->getFirstEdge();
+
+        while(aresta != nullptr){
+
+            if(aresta->getTargetId() == id){
+
+                aux->removeEdge(id, false, aux);
+                break;
+            }
+
+            aresta = aresta->getNextEdge();
+        }
+
+        aux = aux->getNextNode();
+        }
+
+    }else{
+
+ //cout << "Not Found " << endl;
+    }
 }
 
 void Graph::fechoTransitivoIndireto(int idNode){
@@ -1073,16 +1149,16 @@ bool Graph::possuiGrupo(int grupo){
 
 void Graph::removeTodosDoGrupo(int grupo, int nodeNotDeleted){
 
-    cout << "removendo todos do grupo" << endl;
+   // cout << "removendo todos do grupo" << endl;
    for(Node* aux = this->first_node; aux != nullptr; aux = aux->getNextNode()){
 
         if(aux->getGroup() == grupo && aux->getId() != nodeNotDeleted){
-
+                        cout << "removendo no " << aux->getId() << endl;
                         this->removeNode(aux->getId());
         }
 
    }
-  cout  << "todos do grupo removidos" << endl;
+ // cout  << "todos do grupo removidos" << endl;
 }
 
 
@@ -1105,7 +1181,8 @@ arquivo_saida << "---------Algoritmo Guloso PAGMG---------" << endl;
 
    for(Node* aux = this->first_node; aux != nullptr; aux = aux->getNextNode()){
         for(Edge* aux2 = aux->getFirstEdge(); aux2 != nullptr; aux2 = aux2->getNextEdge()){
-        candidatos->insertEdge(aux->getId(), aux2->getTargetId(), aux2->getWeight());
+        candidatos->insertEdgeSemVerificar(aux->getId(), aux2->getTargetId(), aux2->getWeight());
+      //  candidatos->insertEdgeSemVerificar(aux2->getTargetId(),aux->getId(), aux2->getWeight());
         }
    }
 
@@ -1113,38 +1190,53 @@ arquivo_saida << "---------Algoritmo Guloso PAGMG---------" << endl;
    candidatos->printarGrafo();
 
     int quantidadeGrupo = this->getGroupSize();
-    cout << "tamanho do grupo " << this->getGroupSize() << endl;
+   // cout << "tamanho do grupo " << this->getGroupSize() << endl;
 
     int auxGrupo = 1;
+    int auxJaInseridoGrupo = -1;
     Node* auxNode = nullptr;
 
     while(auxGrupo <= this->getGroupSize()){
 
             cout << "Grupo analisado" << auxGrupo << endl;
 
+            if(auxGrupo != auxJaInseridoGrupo){
             auxNode = candidatos->heuristica(auxGrupo); //Retorna 1 nó e 1 aresta
 
-            cout << "Verificando no" << auxNode->getId() << endl;
+
+            cout << "Verificando no " << auxNode->getId() << "aresta " << auxNode->getFirstEdge()->getTargetId() << endl;
+            Node* auxDoIDo = candidatos->getNode(auxNode->getFirstEdge()->getTargetId());
 
             if(auxGrupo != 1){
-                 Node* auxDoIDo = candidatos->getNode(auxNode->getId());
+
                  if(arvoreAGM->possuiGrupo(auxDoIDo->getGroup())){
 
                     arvoreAGM->insertNodeGroup(auxNode->getId(), auxNode->getGroup());
                     arvoreAGM->insertEdge(auxNode->getId(),auxNode->getFirstEdge()->getTargetId(),auxNode->getFirstEdge()->getWeight());
                     candidatos->removeTodosDoGrupo(auxGrupo, auxNode->getId());
-
+                    auxGrupo++;
                  }else{
-                    //não passa na condição
+                    candidatos->getNode(auxNode->getId())->removeEdge(auxDoIDo->getId(),false,auxDoIDo);
+
+                     //candidatos->removeNode(auxNode->getId());
                  }
             }else{
                 arvoreAGM->insertNodeGroup(auxNode->getId(), auxNode->getGroup());
-                arvoreAGM->insertEdge(auxNode->getId(),auxNode->getFirstEdge()->getTargetId(),auxNode->getFirstEdge()->getWeight());
+                arvoreAGM->insertNodeGroup(auxDoIDo->getId(), auxDoIDo->getGroup());
 
+                arvoreAGM->insertEdge(auxNode->getId(),auxNode->getFirstEdge()->getTargetId(),auxNode->getFirstEdge()->getWeight());
                 candidatos->removeTodosDoGrupo(auxGrupo, auxNode->getId());
+                candidatos->removeTodosDoGrupo(auxDoIDo->getGroup(), auxDoIDo->getId());
+
+                auxJaInseridoGrupo = auxDoIDo->getGroup();
+                auxGrupo++;
+            }
+            }else{
+                  auxGrupo++;
             }
 
-        auxGrupo++;
+        candidatos->printarGrafo();
+
     }
 
   //remover todos os nós do grupo para que apenas possa ligar ao mesmo já existente

@@ -154,7 +154,10 @@ void Node::removeAllEdges(){
 
 int Node::removeEdge(int id, bool directed, Node* target_node){
     // Verifies whether the edge to remove is in the node
+
+
     if(this->searchEdge(id)){
+        cout << "removendo aresta " << id << "--" << target_node->getId() << endl;
 
         Edge* aux = this->first_edge;
         Edge* previous = nullptr;
