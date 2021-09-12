@@ -82,7 +82,7 @@ class Graph{
         // Métodos Entrega 2
         void guloso(ofstream& arquivo_saida);
         void gulosoRandomizado(ofstream& arquivo_saida, int fator);
-        void gulosoRandomizadoReativo(ofstream& arquivo_saida);
+        void gulosoRandomizadoReativo(ofstream& arquivo_saida,float vetorAlfa[5], int fator, int bloco);
 
         int minDistance(int dist[], bool sptSet[]);
     private:

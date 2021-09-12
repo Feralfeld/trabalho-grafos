@@ -1411,6 +1411,175 @@ arquivo_saida << "---------Algoritmo Guloso PAGMG---------" << endl;
 }
 
 
-void Graph::gulosoRandomizadoReativo(ofstream& arquivo_saida){
+void Graph::gulosoRandomizadoReativo(ofstream& arquivo_saida,float vetorAlfa[5],int fator, int bloco){
+arquivo_saida << "---------Algoritmo Guloso PAGMG---------" << endl;
+    arquivo_saida << "[No_Origem -- No_Destino] - Peso" << endl;
+    arquivo_saida << "-----------------------------" << endl;
+    auto start = high_resolution_clock::now();
 
+    Graph* melhorSolucao = new Graph(this->order, false,true,false);
+    int menorSomatorio = -1;
+    int blocoCount = 1;
+    float alfa = 1;
+    int auxAlfa = 4;
+    int melhorSomatorioAnterior = 0;
+    int iniciandoGrupo = 0;
+    int melhorInicio = 0;
+    int prob;
+    int media = 0;
+
+
+    for(int i = 0 ; i < fator; i++){
+
+    if(blocoCount % bloco == 0){
+    // atualizarProbabilidade();
+
+        if(media == 0 ){
+             media = melhorInicio;
+        }else{
+            media = (melhorInicio + media) / 2 ;
+        }
+
+
+       if(media > melhorInicio){
+       auxAlfa = (int) ((melhorInicio + (media/2)) % 4);
+       }
+       else{
+       auxAlfa = (int) ((melhorInicio - (media/2)) % 4);
+       }
+
+    }
+
+
+
+ //INICIO DO PROCESSO
+    Graph* candidatos = new Graph(this->order, false,true,false);
+    Graph* arvoreAGM = new Graph(this->order, false,true,false);
+    int somatorioPeso = 0;
+
+
+        for(Node* aux = this->first_node; aux != nullptr; aux = aux->getNextNode()){
+                 candidatos->insertNodeGroup(aux->getId(), aux->getGroup());
+        }
+
+//PREPARA LISTA DE CANDIDATOS
+   for(Node* aux = this->first_node; aux != nullptr; aux = aux->getNextNode()){
+        for(Edge* aux2 = aux->getFirstEdge(); aux2 != nullptr; aux2 = aux2->getNextEdge()){
+      //candidatos->insertEdge(aux->getId(), aux2->getTargetId(), aux2->getWeight());
+        candidatos->insertEdgeSemVerificar(aux->getId(), aux2->getTargetId(), aux2->getWeight());
+        candidatos->insertEdgeSemVerificar(aux2->getTargetId(),aux->getId(), aux2->getWeight());
+        }
+   }
+
+   //candidatos->printarGrafo();
+
+    int quantidadeGrupo = this->getGroupSize();
+   // cout << "tamanho do grupo " << this->getGroupSize() << endl;
+
+
+    bool controleGrupo[candidatos->getGroupSize()+1];
+
+    for(int y =1 ; y < candidatos->getGroupSize()+1; y++){
+        controleGrupo[y]=false;
+    }
+
+
+    int auxGrupo = 2;
+    int auxJaInseridoGrupo = -1;
+    Node* auxNode = nullptr;
+    int grupoAtual = -1;
+
+    // ALGORITMO GULOSO COM CRITERIO DE PARADA E ETC...
+    while(auxGrupo <= this->getGroupSize()){
+
+                int flag = 0;
+   // cout << "selecionando grupo" << endl;
+             do{
+                    alfa = vetorAlfa[auxAlfa];
+                    if(flag >= 3 ){
+                        alfa = 1;
+                    }
+                 grupoAtual = inteiroRandomico(1, (int)(this->getGroupSize() * alfa));
+                 flag++;
+
+             }while(controleGrupo[grupoAtual] != false);
+
+//cout << " grupo selecionado" << endl;
+
+            auxNode = candidatos->heuristica(grupoAtual); //Retorna 1 nó e 1 aresta, a aresta de menor peso do grupo
+
+          //  cout << "Verificando no " << auxNode->getId() << "aresta " << auxNode->getFirstEdge()->getTargetId() << endl;
+            Node* auxDoIDo = candidatos->getNode(auxNode->getFirstEdge()->getTargetId());
+
+            if(auxGrupo != 2){
+
+                 if(controleGrupo[auxDoIDo->getGroup()] == true){
+                    //arvoreAGM->possuiGrupo(auxDoIDo->getGroup())){  // verificação, verifica se a aresta liga a um no que ja esta na solução, se não elimina, se sim insere na solulçai
+
+                    arvoreAGM->insertNodeGroup(auxNode->getId(), auxNode->getGroup());
+                    arvoreAGM->insertEdge(auxNode->getId(),auxNode->getFirstEdge()->getTargetId(),auxNode->getFirstEdge()->getWeight());
+
+                    somatorioPeso= somatorioPeso+ auxNode->getFirstEdge()->getWeight();
+                    candidatos->removeTodosDoGrupo(grupoAtual, auxNode->getId());
+                    auxGrupo++;
+                    controleGrupo[grupoAtual] = true;
+                 }else{
+                    candidatos->getNode(auxNode->getId())->removeEdge(auxDoIDo->getId(),false,auxDoIDo);
+
+                 }
+            }else{ // primeira inserção, insere 2 grupos de cara, pois a  aresta liga a 2 extremidades
+
+                iniciandoGrupo = grupoAtual;
+               //cout << "comecando pelo no " << grupoAtual << endl;
+                arvoreAGM->insertNodeGroup(auxNode->getId(), auxNode->getGroup());
+                arvoreAGM->insertNodeGroup(auxDoIDo->getId(), auxDoIDo->getGroup());
+
+                somatorioPeso= somatorioPeso+ auxNode->getFirstEdge()->getWeight();
+                arvoreAGM->insertEdge(auxNode->getId(),auxNode->getFirstEdge()->getTargetId(),auxNode->getFirstEdge()->getWeight());
+                candidatos->removeTodosDoGrupo(grupoAtual, auxNode->getId());
+                candidatos->removeTodosDoGrupo(auxDoIDo->getGroup(), auxDoIDo->getId());
+
+
+                controleGrupo[grupoAtual] = true;
+                controleGrupo[auxDoIDo->getGroup()] = true;
+
+                auxJaInseridoGrupo = auxDoIDo->getGroup();
+                auxGrupo++;
+            }
+
+               //   auxGrupo++;
+
+    }
+
+    if(menorSomatorio > somatorioPeso || menorSomatorio == -1 ){
+        melhorSolucao = arvoreAGM;
+        menorSomatorio = somatorioPeso;
+        melhorInicio = iniciandoGrupo;
+    }
+
+    blocoCount++;
+
+   // cout << " Melhor solucao -> " << menorSomatorio << endl;
+
+    }
+  // RELATORIO FINAL
+     auto stop = high_resolution_clock::now();
+
+     auto duration = duration_cast<microseconds>(stop - start);
+     double tempoEmSegundos = duration.count() / 1000000.0;
+     cout << "Tempo em segundos " << tempoEmSegundos << endl;
+     arquivo_saida << "Tempo em segundos " << tempoEmSegundos << endl;
+
+     arquivo_saida << "------------ArvorePAGMG-------" << endl;
+     //arvoreAGM->printarGrafoArquivo(arquivo_saida);
+     arquivo_saida << "Total de arestas " << melhorSolucao->getNumberEdges() << endl;
+     arquivo_saida << "Somatorio Peso Arestas " <<  menorSomatorio << endl;
+
+     cout << "------------ArvorePAGMG--------" << endl;
+     melhorSolucao->printarGrafo();
+     //arvoreAGM->printarGrafoGraphviz(graphviz);
+
+     cout << "Total de arestas " << melhorSolucao->getNumberEdges() << endl;
+     cout << "Somatorio Peso Arestas " <<  menorSomatorio << endl;
+     // return arvoreAGM;
 }
