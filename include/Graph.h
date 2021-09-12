@@ -77,11 +77,12 @@ class Graph{
         Node* heuristica(int grupo);
         void removeTodosDoGrupo(int grupo, int nodeNotDeleted);
         bool possuiGrupo(int grupo);
+        int inteiroRandomico(int min_value ,int max_value);
 
         // Métodos Entrega 2
         void guloso(ofstream& arquivo_saida);
-        void gulosoRandomizado();
-        void gulosoRandomizadoReativo();
+        void gulosoRandomizado(ofstream& arquivo_saida, int fator);
+        void gulosoRandomizadoReativo(ofstream& arquivo_saida);
 
         int minDistance(int dist[], bool sptSet[]);
     private:

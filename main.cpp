@@ -262,7 +262,7 @@ void selecionar(int selecao, Graph* graph, ofstream& output_file){
                 cout << "O grafo nao pode ser direcionado...";
             } else {
                 cout << "PRINTANDO ALGORITMO GULOSO RANDOMIZADO" << endl;
-                graph->gulosoRandomizado();
+                graph->gulosoRandomizado(output_file,1000);
             }
              break;
         }
@@ -273,7 +273,7 @@ void selecionar(int selecao, Graph* graph, ofstream& output_file){
                 cout << "O grafo nao pode ser direcionado...";
             } else {
                 cout << "PRINTANDO ALGORITMO GULOSO RANDOMIZADO REATIVO" << endl;
-                graph->gulosoRandomizadoReativo();
+                graph->gulosoRandomizadoReativo(output_file);
             }
              break;
         }
