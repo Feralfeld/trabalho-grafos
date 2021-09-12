@@ -322,9 +322,9 @@ int main(int argc, char const *argv[]) {
 
     //Verificação se todos os parâmetros do programa foram entrados
 
-      for(int valor =0 ; valor < argc ; valor++ ){
-        cout << "Valor args [" << valor<<"] = " << argv[valor] << endl;
-      }
+    //  for(int valor =0 ; valor < argc ; valor++ ){
+    //    cout << "Valor args [" << valor<<"] = " << argv[valor] << endl;
+    //  }
 
     if (argc != 6) {
 
@@ -340,7 +340,7 @@ int main(int argc, char const *argv[]) {
 
    // if(input_file_name.find("v") <= input_file_name.size()){
         string instance = input_file_name.substr(0,input_file_name.find("."));
-        cout << "Running " << program_name << " with instance " << instance << " ... " << endl;
+        cout << "Running with instance " << instance << endl;
    // }
 
 
