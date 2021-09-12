@@ -1372,9 +1372,6 @@ arquivo_saida << "---------Algoritmo Guloso PAGMG---------" << endl;
                 auxJaInseridoGrupo = auxDoIDo->getGroup();
                 auxGrupo++;
             }
-
-               //   auxGrupo++;
-
     }
 
     if(menorSomatorio > somatorioPeso || menorSomatorio == -1 ){
@@ -1492,8 +1489,7 @@ arquivo_saida << "---------Algoritmo Guloso PAGMG---------" << endl;
     // ALGORITMO GULOSO COM CRITERIO DE PARADA E ETC...
     while(auxGrupo <= this->getGroupSize()){
 
-                int flag = 0;
-   // cout << "selecionando grupo" << endl;
+             int flag = 0;
              do{
                     alfa = vetorAlfa[auxAlfa];
                     if(flag >= 3 ){
@@ -1504,11 +1500,10 @@ arquivo_saida << "---------Algoritmo Guloso PAGMG---------" << endl;
 
              }while(controleGrupo[grupoAtual] != false);
 
-//cout << " grupo selecionado" << endl;
+
 
             auxNode = candidatos->heuristica(grupoAtual); //Retorna 1 nó e 1 aresta, a aresta de menor peso do grupo
 
-          //  cout << "Verificando no " << auxNode->getId() << "aresta " << auxNode->getFirstEdge()->getTargetId() << endl;
             Node* auxDoIDo = candidatos->getNode(auxNode->getFirstEdge()->getTargetId());
 
             if(auxGrupo != 2){
@@ -1547,8 +1542,6 @@ arquivo_saida << "---------Algoritmo Guloso PAGMG---------" << endl;
                 auxGrupo++;
             }
 
-               //   auxGrupo++;
-
     }
 
     if(menorSomatorio > somatorioPeso || menorSomatorio == -1 ){
@@ -1558,8 +1551,6 @@ arquivo_saida << "---------Algoritmo Guloso PAGMG---------" << endl;
     }
 
     blocoCount++;
-
-   // cout << " Melhor solucao -> " << menorSomatorio << endl;
 
     }
   // RELATORIO FINAL
@@ -1581,5 +1572,6 @@ arquivo_saida << "---------Algoritmo Guloso PAGMG---------" << endl;
 
      cout << "Total de arestas " << melhorSolucao->getNumberEdges() << endl;
      cout << "Somatorio Peso Arestas " <<  menorSomatorio << endl;
+
      // return arvoreAGM;
 }

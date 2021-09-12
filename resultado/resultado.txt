@@ -1,16 +1,32 @@
 ---------Algoritmo Guloso PAGMG---------
 [No_Origem -- No_Destino] - Peso
 -----------------------------
-Tempo em segundos 2.09375
+Tempo em segundos 2.2088
 ------------ArvorePAGMG-------
 Total de arestas 9
-Somatorio Peso Arestas 11602
+Somatorio Peso Arestas 12424
 
 ---------Algoritmo Guloso PAGMG---------
 [No_Origem -- No_Destino] - Peso
 -----------------------------
-Tempo em segundos 5.69631
+Tempo em segundos 2.211
 ------------ArvorePAGMG-------
 Total de arestas 9
 Somatorio Peso Arestas 11795
+
+---------Algoritmo Guloso PAGMG---------
+[No_Origem -- No_Destino] - Peso
+-----------------------------
+Tempo em segundos 2.218
+------------ArvorePAGMG-------
+Total de arestas 9
+Somatorio Peso Arestas 11795
+
+---------Algoritmo Guloso PAGMG---------
+[No_Origem -- No_Destino] - Peso
+-----------------------------
+Tempo em segundos 2.188
+------------ArvorePAGMG-------
+Total de arestas 9
+Somatorio Peso Arestas 11419
 

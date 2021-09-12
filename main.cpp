@@ -274,7 +274,7 @@ void selecionar(int selecao, Graph* graph, ofstream& output_file){
             } else {
                 cout << "PRINTANDO ALGORITMO GULOSO RANDOMIZADO REATIVO" << endl;
                 float a[5] = {0.6, 0.7, 0.8, 0.9, 1};
-                graph->gulosoRandomizadoReativo(output_file,a,2500,10);
+                graph->gulosoRandomizadoReativo(output_file,a,1000,10);
             }
              break;
         }
