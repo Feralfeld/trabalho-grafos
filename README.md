@@ -16,3 +16,9 @@ Sendo X no código acima 1 ou 0 reprensentando TRUE ou FALSE para, respectivamen
 - Grafo Direcionado
 - Aresta com pesos
 - Nós com pesos
+
+Para "arquivoInstancia" use *instancias/12brazil58.clu*
+
+Para "arquivoSaida" use *resultado/resultado.txt*
+
+
